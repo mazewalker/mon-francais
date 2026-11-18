@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mon Français – francia gyakorló</title>
+<meta name="theme-color" content="#fbf7f0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf7f0;--card:#fff;--ink:#1c2140;--muted:#6a6f8c;--line:#ebe4d8;--blue:#2f4fd8;--blue-soft:#e8edff;--red:#e5484d;--red-soft:#fdeaea;--green:#16935f;--green-soft:#e3f6ec;--amber:#b87300;--amber-soft:#fff3dc;--r:18px;--shadow:0 1px 2px rgba(28,33,64,.06),0 6px 20px rgba(28,33,64,.06)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,-apple-system,sans-serif;font-size:17px;line-height:1.45;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--blue)}
+.wrap{max-width:760px;margin:0 auto;padding:16px 16px 90px}
+header.top{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.brand{display:flex;align-items:center;gap:10px;font-family:Fraunces,serif;font-weight:800;font-size:22px;text-decoration:none;color:var(--ink)}
+.flag{display:inline-flex;width:26px;height:18px;border-radius:4px;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.08)}
+.flag i{flex:1}.flag i:nth-child(1){background:#2f4fd8}.flag i:nth-child(2){background:#fff}.flag i:nth-child(3){background:#e5484d}
+.spacer{flex:1}
+.iconbtn{border:0;background:var(--card);box-shadow:var(--shadow);width:42px;height:42px;border-radius:12px;cursor:pointer;font-size:19px;display:inline-grid;place-items:center;text-decoration:none;color:var(--ink)}
+.sync{font-size:15px;color:var(--muted)}
+h1,h2,h3{font-family:Fraunces,serif;line-height:1.15;margin:0 0 8px}
+h1{font-size:30px}h2{font-size:21px}h3{font-size:18px}
+.muted{color:var(--muted)}.small{font-size:14px}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:18px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:620px){.grid{grid-template-columns:repeat(3,1fr)}}
+.grid2{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
+@media(min-width:620px){.grid2{grid-template-columns:1fr 1fr}}
+.tbox{background:#fbf8f2;border-radius:14px;padding:10px 12px}
+.mode{display:flex;flex-direction:column;gap:4px;padding:16px;border-radius:var(--r);background:var(--card);box-shadow:var(--shadow);text-decoration:none;color:var(--ink);border:2px solid transparent;transition:transform .12s,border-color .12s;position:relative;min-height:128px}
+.mode:hover{transform:translateY(-2px);border-color:var(--blue-soft)}
+.mode .ic{font-size:30px}
+.mode b{font-size:17px}
+.mode span{font-size:13.5px;color:var(--muted)}
+.badge{position:absolute;top:12px;right:12px;background:var(--red);color:#fff!important;font-size:12px!important;font-weight:800;border-radius:99px;padding:2px 8px}
+.stats{display:flex;gap:10px;margin:8px 0 16px;flex-wrap:wrap}
+.stat{flex:1;min-width:120px;background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:10px 12px}
+.stat b{display:block;font-size:22px;font-family:Fraunces,serif}
+.stat span{font-size:12.5px;color:var(--muted)}
+.btn{border:0;border-radius:14px;padding:12px 18px;font-weight:800;cursor:pointer;background:var(--blue);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;min-height:48px}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:var(--blue-soft);color:var(--blue)}
+.btn.light{background:#f1ede5;color:var(--ink)}
+.btn.red{background:var(--red)}.btn.green{background:var(--green)}
+.btn.sm{padding:7px 12px;min-height:36px;font-size:14px;border-radius:10px}
+.btn.block{width:100%}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:2px solid var(--line);background:var(--card);border-radius:99px;padding:6px 12px;font-weight:700;font-size:14px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.chip.on{border-color:var(--blue);background:var(--blue-soft);color:var(--blue)}
+label.f{display:block;font-weight:800;font-size:14px;margin:14px 0 6px}
+.t{width:100%;border:2px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;outline:none}
+.t:focus{border-color:var(--blue)}
+.answer{font-size:24px;padding:14px 16px;border-radius:14px;text-align:center;font-weight:700}
+.answer.ok{border-color:var(--green);background:var(--green-soft)}
+.answer.bad{border-color:var(--red);background:var(--red-soft)}
+.answer.near{border-color:var(--amber);background:var(--amber-soft)}
+.accents{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0}
+.accents button{border:0;background:#f1ede5;border-radius:10px;min-width:40px;height:40px;font-size:19px;font-weight:700;cursor:pointer;touch-action:manipulation}
+.accents button:active{background:var(--blue-soft)}
+.prog{height:8px;background:#efe9df;border-radius:99px;overflow:hidden;margin:6px 0 14px}
+.prog i{display:block;height:100%;background:var(--blue);border-radius:99px;transition:width .3s}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px;color:var(--muted);font-weight:800}
+.prompt{text-align:center;padding:16px 6px}
+.prompt .big{font-family:Fraunces,serif;font-size:32px;font-weight:800;line-height:1.15;word-break:break-word}
+.prompt .note{color:var(--muted);font-size:15px;margin-top:6px}
+.speak{width:96px;height:96px;border-radius:50%;border:0;background:var(--blue);color:#fff;font-size:40px;cursor:pointer;box-shadow:0 8px 24px rgba(47,79,216,.35)}
+.speak.sm{width:42px;height:42px;font-size:19px;box-shadow:none;flex:none}
+.fb{border-radius:14px;padding:14px;margin-top:12px;text-align:center}
+.fb.ok{background:var(--green-soft)}.fb.bad{background:var(--red-soft)}.fb.near{background:var(--amber-soft)}
+.fb h3{margin:0 0 6px}
+.diff{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:19px;margin:2px 0 8px;word-break:break-word}
+.diff del{background:#ffc9c9;color:#a10f15;text-decoration:line-through}
+.diff ins{background:#bdf0d3;color:#0b6b41;text-decoration:none;font-weight:800}
+.flip{perspective:1200px;cursor:pointer}
+.flip .inner{position:relative;min-height:250px;transition:transform .45s;transform-style:preserve-3d}
+.flip.on .inner{transform:rotateY(180deg)}
+.flip .side{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;border-radius:var(--r);background:var(--card);box-shadow:var(--shadow);text-align:center}
+.flip .back{transform:rotateY(180deg);background:#fffdf8}
+.opts{display:grid;gap:10px}
+.opt{border:2px solid var(--line);background:#fff;border-radius:14px;padding:14px;font-size:18px;font-weight:700;text-align:left;cursor:pointer}
+.opt.ok{border-color:var(--green);background:var(--green-soft)}
+.opt.bad{border-color:var(--red);background:var(--red-soft)}
+.opt kbd{display:inline-block;min-width:22px;color:var(--muted);font-size:13px;font-family:inherit}
+table.conj{width:100%;border-collapse:collapse}
+table.conj td{padding:5px 4px;vertical-align:middle}
+table.conj td.p{width:1%;font-weight:800;color:var(--muted);text-align:right;padding-right:10px;white-space:nowrap}
+table.conj input{font-size:19px;padding:9px 10px}
+table.conj tr.ok input{border-color:var(--green);background:var(--green-soft)}
+table.conj tr.bad input{border-color:var(--red);background:var(--red-soft)}
+table.conj tr.near input{border-color:var(--amber);background:var(--amber-soft)}
+table.conj tr.say{cursor:pointer}
+table.conj tr.say:hover td{background:#f3eee4}
+.corr{font-size:15px;color:var(--green);font-weight:800;margin-top:2px}
+.pill{display:inline-block;border-radius:99px;padding:3px 10px;font-size:13px;font-weight:800;background:var(--blue-soft);color:var(--blue);margin:2px 0}
+.pill.r{background:var(--red-soft);color:var(--red)}
+.pill.g{background:var(--green-soft);color:var(--green)}
+.pill.a{background:var(--amber-soft);color:var(--amber)}
+.tip{background:#f7f3ea;border-radius:12px;padding:10px 12px;font-size:14.5px;margin-top:12px}
+.tip summary{cursor:pointer;font-weight:800}
+details summary{cursor:pointer}
+.words{width:100%;border-collapse:collapse;font-size:15px}
+.words td,.words th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.words th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.dots{display:inline-flex;gap:2px;margin-top:6px}.dots i{width:7px;height:7px;border-radius:2px;background:#e6dfd2}.dots i.f{background:var(--green)}
+.drop{border:2.5px dashed #d8cfbf;border-radius:16px;padding:22px;text-align:center;cursor:pointer;background:#fffdf9}
+.drop.over{border-color:var(--blue);background:var(--blue-soft)}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;box-shadow:var(--shadow);z-index:50;max-width:92vw;opacity:0;transition:opacity .2s;pointer-events:none;text-align:center}
+.toast.show{opacity:1}
+pre.code{background:#fff;border-radius:10px;padding:10px;overflow:auto;font-size:13px;margin:8px 0;border:1px solid var(--line)}
+.listrow{display:flex;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.switch{position:relative;width:46px;height:28px;flex:none;display:inline-block}
+.switch input{opacity:0;width:0;height:0;position:absolute}
+.switch span{position:absolute;inset:0;background:#ddd5c6;border-radius:99px;transition:.2s;cursor:pointer}
+.switch span:before{content:"";position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked+span{background:var(--green)}
+.switch input:checked+span:before{transform:translateX(18px)}
+.center{text-align:center}
+.mt{margin-top:12px}
+.hide{display:none!important}
+.score{font-family:Fraunces,serif;font-size:58px;font-weight:800;line-height:1}
+.hintline{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:20px;letter-spacing:.06em;min-height:28px;color:var(--amber);font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#"><span class="flag"><i></i><i></i><i></i></span>Mon Français</a>
+    <span class="spacer"></span>
+    <span class="sync" id="sync"></span>
+    <a class="iconbtn" href="#szavak" title="Szólisták" aria-label="Szólisták">📚</a>
+    <a class="iconbtn" href="#beallitasok" title="Beállítások" aria-label="Beállítások">⚙️</a>
+  </header>
+  <main id="app"></main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+'use strict';
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+const app=$('#app');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const DAY=864e5;
+const fmtDay=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today=()=>fmtDay(new Date());
+function hash(s){let h=5381;for(const c of s)h=((h<<5)+h+c.codePointAt(0))|0;return (h>>>0).toString(36)}
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const pick=a=>a[Math.random()*a.length|0];
+function toast(msg,ms=2800){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),ms)}
+
+/* ---------- szövegkezelés ---------- */
+function norm(s){return String(s||'').toLowerCase().replace(/[’‘ʼ´`]/g,"'").replace(/ | /g,' ').replace(/\s*'\s*/g,"'").replace(/\s+/g,' ').replace(/[\s.!?…,;:]+$/,'').replace(/^[\s¿¡]+/,'').trim()}
+const fold=s=>s.replace(/œ/g,'oe').replace(/æ/g,'ae');
+const deacc=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'');
+function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=Array.from({length:n+1},(_,i)=>i);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
+const ABBR=[[/\bqqch\b\.?/g,'quelque chose'],[/\bqch\b\.?/g,'quelque chose'],[/\bqqn\b\.?/g,"quelqu'un"],[/\bqn\b\.?/g,"quelqu'un"]];
+function expandAbbr(s){for(const [r,t] of ABBR)s=s.replace(r,t);return s}
+function frParts(fr){return String(fr||'').split(/\s*\|\s*|\s+\/\s+/).map(x=>x.trim()).filter(Boolean)}
+function speakText(fr){return expandAbbr((frParts(fr)[0]||'').replace(/\([^)]*\)/g,' ')).replace(/[…]/g,'').replace(/\s+/g,' ').trim()}
+function variants(fr){const out=new Set();for(const p of frParts(fr)){for(const v of [p,p.replace(/[()]/g,''),p.replace(/\([^)]*\)/g,' ')]){out.add(norm(v));out.add(norm(expandAbbr(v)))}}out.delete('');return [...out]}
+const stripArt=s=>s.replace(/^(?:(?:le|la|les|un|une|des|du)\s+|l')/,'');
+function checkWord(user,fr){
+  const u=norm(user),uk=fold(u);const vs=variants(fr),ks=vs.map(fold);
+  let best=vs[0]||'',bd=1e9;vs.forEach((v,i)=>{const d=lev(uk,ks[i]);if(d<bd){bd=d;best=v}});
+  if(!u)return{res:'bad',reason:'bad',best};
+  if(ks.includes(uk))return{res:'ok',best:u};
+  const ka=ks.map(stripArt),ua=stripArt(uk);
+  if(!S.settings.article&&ka.includes(ua))return{res:'ok',best};
+  if(ks.some(k=>deacc(k)===deacc(uk)))return{res:'near',reason:'accent',best};
+  if(ka.includes(ua))return{res:'near',reason:ua===uk?'artmiss':'artwrong',best};
+  if(bd===1&&best.length>=4)return{res:'near',reason:'typo',best};
+  return{res:'bad',reason:'bad',best};
+}
+function diffHTML(user,correct){const a=[...user],b=[...correct],n=a.length,m=b.length;const dp=Array.from({length:n+1},()=>new Int16Array(m+1));
+  for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)dp[i][j]=a[i]===b[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+  let i=0,j=0,A='',B='';
+  while(i<n&&j<m){if(a[i]===b[j]){A+=esc(a[i]);B+=esc(b[j]);i++;j++}else if(dp[i+1][j]>=dp[i][j+1]){A+=`<del>${esc(a[i])}</del>`;i++}else{B+=`<ins>${esc(b[j])}</ins>`;j++}}
+  while(i<n)A+=`<del>${esc(a[i++])}</del>`;while(j<m)B+=`<ins>${esc(b[j++])}</ins>`;return{a:A,b:B}}
+
+/*ENGINE*/
+/* ---------- igeragozó ---------- */
+const VOWEL=/^[aeiouyhâàäéèêëîïôöûùüœæ]/;
+const IRR=[
+ {s:'être',only:['être'],p:'suis es est sommes êtes sont',pp:'été',f:'ser',imp:'ét'},
+ {s:'avoir',only:['avoir'],p:'ai as a avons avez ont',pp:'eu',f:'aur'},
+ {s:'aller',only:['aller'],p:'vais vas va allons allez vont',pp:'allé',f:'ir'},
+ {s:'faire',p:'fais fais fait faisons faites font',pp:'fait',f:'fer'},
+ {s:'dire',only:['dire','redire'],p:'dis dis dit disons dites disent',pp:'dit',f:'dir'},
+ {s:'pouvoir',only:['pouvoir'],p:'peux peux peut pouvons pouvez peuvent',pp:'pu',f:'pourr'},
+ {s:'vouloir',only:['vouloir'],p:'veux veux veut voulons voulez veulent',pp:'voulu',f:'voudr'},
+ {s:'devoir',only:['devoir'],p:'dois dois doit devons devez doivent',pp:'dû',f:'devr'},
+ {s:'savoir',only:['savoir'],p:'sais sais sait savons savez savent',pp:'su',f:'saur'},
+ {s:'valoir',p:'vaux vaux vaut valons valez valent',pp:'valu',f:'vaudr'},
+ {s:'falloir',only:['falloir'],p:'- - faut - - -',pp:'fallu',f:'faudr',imp:'fall',impers:1},
+ {s:'pleuvoir',only:['pleuvoir'],p:'- - pleut - - -',pp:'plu',f:'pleuvr',imp:'pleuv',impers:1},
+ {s:'cevoir',p:'çois çois çoit cevons cevez çoivent',pp:'çu',f:'cevr'},
+ {s:'prévoir',p:'prévois prévois prévoit prévoyons prévoyez prévoient',pp:'prévu',f:'prévoir'},
+ {s:'voir',p:'vois vois voit voyons voyez voient',pp:'vu',f:'verr'},
+ {s:'asseoir',p:'assieds assieds assied asseyons asseyez asseyent',pp:'assis',f:'assiér'},
+ {s:'venir',p:'viens viens vient venons venez viennent',pp:'venu',f:'viendr'},
+ {s:'tenir',p:'tiens tiens tient tenons tenez tiennent',pp:'tenu',f:'tiendr'},
+ {s:'prendre',p:'prends prends prend prenons prenez prennent',pp:'pris',f:'prendr'},
+ {s:'mettre',p:'mets mets met mettons mettez mettent',pp:'mis',f:'mettr'},
+ {s:'battre',p:'bats bats bat battons battez battent',pp:'battu',f:'battr'},
+ {s:'rompre',p:'romps romps rompt rompons rompez rompent',pp:'rompu',f:'rompr'},
+ {s:'vaincre',p:'vaincs vaincs vainc vainquons vainquez vainquent',pp:'vaincu',f:'vaincr'},
+ {s:'coudre',p:'couds couds coud cousons cousez cousent',pp:'cousu',f:'coudr'},
+ {s:'partir',p:'pars pars part partons partez partent',pp:'parti',f:'partir'},
+ {s:'sortir',p:'sors sors sort sortons sortez sortent',pp:'sorti',f:'sortir'},
+ {s:'sentir',p:'sens sens sent sentons sentez sentent',pp:'senti',f:'sentir'},
+ {s:'mentir',p:'mens mens ment mentons mentez mentent',pp:'menti',f:'mentir'},
+ {s:'dormir',p:'dors dors dort dormons dormez dorment',pp:'dormi',f:'dormir'},
+ {s:'servir',p:'sers sers sert servons servez servent',pp:'servi',f:'servir'},
+ {s:'vrir',p:'vre vres vre vrons vrez vrent',pp:'vert',f:'vrir'},
+ {s:'frir',p:'fre fres fre frons frez frent',pp:'fert',f:'frir'},
+ {s:'cueillir',p:'cueille cueilles cueille cueillons cueillez cueillent',pp:'cueilli',f:'cueiller'},
+ {s:'quérir',p:'quiers quiers quiert quérons quérez quièrent',pp:'quis',f:'querr'},
+ {s:'bouillir',p:'bous bous bout bouillons bouillez bouillent',pp:'bouilli',f:'bouillir'},
+ {s:'courir',p:'cours cours court courons courez courent',pp:'couru',f:'courr'},
+ {s:'mourir',only:['mourir'],p:'meurs meurs meurt mourons mourez meurent',pp:'mort',f:'mourr'},
+ {s:'fuir',p:'fuis fuis fuit fuyons fuyez fuient',pp:'fui',f:'fuir'},
+ {s:'crire',p:'cris cris crit crivons crivez crivent',pp:'crit',f:'crir'},
+ {s:'lire',p:'lis lis lit lisons lisez lisent',pp:'lu',f:'lir'},
+ {s:'suffire',p:'suffis suffis suffit suffisons suffisez suffisent',pp:'suffi',f:'suffir'},
+ {s:'rire',p:'ris ris rit rions riez rient',pp:'ri',f:'rir'},
+ {s:'naître',only:['naître','renaître'],p:'nais nais naît naissons naissez naissent',pp:'né',f:'naîtr'},
+ {s:'aître',p:'ais ais aît aissons aissez aissent',pp:'u',f:'aîtr'},
+ {s:'aitre',p:'ais ais ait aissons aissez aissent',pp:'u',f:'aitr'},
+ {s:'boire',p:'bois bois boit buvons buvez boivent',pp:'bu',f:'boir'},
+ {s:'croire',p:'crois crois croit croyons croyez croient',pp:'cru',f:'croir'},
+ {s:'vivre',p:'vis vis vit vivons vivez vivent',pp:'vécu',f:'vivr'},
+ {s:'suivre',p:'suis suis suit suivons suivez suivent',pp:'suivi',f:'suivr'},
+ {s:'nuire',p:'nuis nuis nuit nuisons nuisez nuisent',pp:'nui',f:'nuir'},
+ {s:'uire',p:'uis uis uit uisons uisez uisent',pp:'uit',f:'uir'},
+ {s:'aindre',p:'ains ains aint aignons aignez aignent',pp:'aint',f:'aindr'},
+ {s:'eindre',p:'eins eins eint eignons eignez eignent',pp:'eint',f:'eindr'},
+ {s:'oindre',p:'oins oins oint oignons oignez oignent',pp:'oint',f:'oindr'},
+ {s:'plaire',p:'plais plais plaît plaisons plaisez plaisent',pp:'plu',f:'plair'},
+ {s:'taire',p:'tais tais tait taisons taisez taisent',pp:'tu',f:'tair'},
+ {s:'traire',p:'trais trais trait trayons trayez traient',pp:'trait',f:'trair'},
+ {s:'clure',p:'clus clus clut cluons cluez cluent',pp:'clu',f:'clur'},
+ {s:'soudre',p:'sous sous sout solvons solvez solvent',pp:'solu',f:'soudr'},
+ {s:'voyer',p:'voie voies voie voyons voyez voient',pp:'voyé',f:'verr'}
+];
+const DOUBLE=['appeler','jeter','épeler','renouveler','ficeler','étinceler','feuilleter'];
+const ETRE=new Set(['aller','venir','devenir','revenir','parvenir','intervenir','survenir','advenir','arriver','partir','repartir','entrer','rentrer','sortir','ressortir','monter','remonter','descendre','redescendre','naître','renaître','mourir','décéder','rester','tomber','retomber','retourner']);
+function joinEr(st,e){if(/^[ao]/.test(e)){if(st.endsWith('c'))return st.slice(0,-1)+'ç'+e;if(st.endsWith('g'))return st+'e'+e}return st+e}
+function erBase(s){
+  const st=s.slice(0,-2);let mute=[st],fut=[s],note=/[cg]$/.test(st);
+  if(DOUBLE.some(d=>s.endsWith(d))&&/e[lt]$/.test(st)){mute=[st+st.slice(-1)];fut=[mute[0]+'er'];note=true}
+  else if(/(^|[^aeiouyéèêëàâîôûù])e[bcdfghjklmnpqrstvwxz]$/.test(st)){const m=st.slice(0,-2)+'è'+st.slice(-1);mute=[m];fut=[m+'er'];note=true}
+  else if(/é[bcdfghjklmnpqrstvwxz]{1,2}$/.test(st)){const m=st.replace(/é([^é]*)$/,'è$1');mute=[m];fut=[s,m+'er'];note=true}
+  else if(/[ou]y$/.test(st)){mute=[st.slice(0,-1)+'i'];fut=[st.slice(0,-1)+'ier'];note=true}
+  else if(/ay$/.test(st)){const i=st.slice(0,-1)+'i';mute=[i,st];fut=[i+'er',s];note=true}
+  const end=['e','es','e','ons','ez','ent'];
+  const pres=end.map((e,k)=>([0,1,2,5].includes(k)?mute:[st]).map(x=>joinEr(x,e)));
+  return{pres,fut,pp:st+'é',group:'1. csoport (-er)'+(note?' · figyelj a helyesírásra!':'')};
+}
+function conjBase(s){
+  let e=IRR.find(x=>x.only&&x.only.includes(s));
+  if(!e){let best=null;for(const x of IRR){if(!x.only&&s.endsWith(x.s)&&(!best||x.s.length>best.s.length))best=x}e=best}
+  if(e){const pre=s.slice(0,s.length-e.s.length);return{pres:e.p.split(' ').map(x=>x==='-'?null:[pre+x]),fut:[pre+e.f],pp:pre+e.pp,group:'rendhagyó ige',impers:!!e.impers,imp:e.imp!=null?pre+e.imp:null}}
+  if(s.endsWith('oir'))return null;
+  if(s.endsWith('er')&&s.length>2)return erBase(s);
+  if(s.endsWith('ir')&&s.length>2){const st=s.slice(0,-2);return{pres:['is','is','it','issons','issez','issent'].map(x=>[st+x]),fut:[s],pp:st+'i',group:'2. csoport (-ir, nous -issons)'}}
+  if(s.endsWith('dre')){const st=s.slice(0,-2);return{pres:['s','s','','ons','ez','ent'].map(x=>[st+x]),fut:[s.slice(0,-1)],pp:st+'u',group:'3. csoport (-re)'}}
+  return null;
+}
+function verbInfo(fr,hu,heur){
+  let s=norm(frParts(fr)[0]||'').replace(/\([^)]*\)/g,' ').replace(/\b(qqch|qqn|qn|qch)\b\.?/g,' ').replace(/\s+/g,' ').trim();
+  const m=s.match(/^(se |s')?([a-zàâäçéèêëîïôöûùüœ]+)(?: (.*))?$/);
+  if(!m)return null;
+  const refl=!!m[1],inf=m[2],rest=(m[3]||'').trim();
+  if(!/(er|ir|re|oir)$/.test(inf))return null;
+  if(!conjBase(inf))return null;
+  if(heur){const hasNi=/(^|[\s,;(])\S*ni($|[\s,;)!?.])/i.test(String(hu||''));if(!hasNi&&(!refl||rest))return null}
+  return{base:inf,refl,rest,display:(refl?(VOWEL.test(inf)?"s'":'se '):'')+inf+(rest?' '+rest:'')};
+}
+const TENSES=[['pres','Présent','jelen idő'],['pc','Passé composé','összetett múlt'],['imp','Imparfait','folyamatos múlt'],['fp','Futur proche','közeli jövő'],['fs','Futur simple','egyszerű jövő'],['cond','Conditionnel','feltételes mód']];
+const TN=Object.fromEntries(TENSES.map(t=>[t[0],t]));
+const AVOIR=['ai','as','a','avons','avez','ont'],ETREF=['suis','es','est','sommes','êtes','sont'],ALLER=['vais','vas','va','allons','allez','vont'];
+const RP=['me','te','se','nous','vous','se'];
+const rp=(k,next)=>([0,1,2,5].includes(k)&&VOWEL.test(next))?RP[k][0]+"'":RP[k]+' ';
+function conjugate(raw){
+  const vi=verbInfo(raw,'',false);if(!vi)return null;
+  const b=conjBase(vi.base);if(!b)return null;
+  const inf=vi.base,refl=vi.refl,rest=vi.rest?' '+vi.rest:'';
+  const etre=refl||ETRE.has(inf);
+  const persons=b.impers?[2]:[0,1,2,3,4,5];
+  const mk=fn=>[0,1,2,3,4,5].map(k=>persons.includes(k)?fn(k):null);
+  const R=(k,forms)=>forms.map(f=>(refl?rp(k,f):'')+f+rest);
+  const IE=['ais','ais','ait','ions','iez','aient'],FE=['ai','as','a','ons','ez','ont'];
+  const out={display:vi.display,inf,refl,etre,pp:b.pp,group:b.group,impers:!!b.impers};
+  out.pres=mk(k=>R(k,b.pres[k]));
+  const imSt=b.imp||b.pres[3][0].replace(/ons$/,'');
+  out.imp=mk(k=>{let st=imSt;if(IE[k][0]==='i'){if(inf.endsWith('ger')&&st.endsWith('ge'))st=st.slice(0,-1);if(inf.endsWith('cer'))st=st.replace(/ç$/,'c')}return R(k,[st+IE[k]])});
+  out.fs=mk(k=>R(k,b.fut.map(f=>f+FE[k])));
+  out.cond=mk(k=>R(k,b.fut.map(f=>f+IE[k])));
+  out.fp=mk(k=>[ALLER[k]+' '+(refl?rp(k,inf):'')+inf+rest]);
+  out.pc=mk(k=>{const aux=etre?ETREF[k]:AVOIR[k];const pre=(refl?rp(k,aux):'')+aux+' ';const pp=b.pp;
+    if(!etre)return[pre+pp+rest];
+    const f=pp+'e',pm=pp.endsWith('s')?pp:pp+'s',pf=pp+'es';
+    const list=k<3?[pp,f]:k===4?[pm,pf,pp,f]:[pm,pf];
+    const disp=k<3?pp+'(e)':k===4?pp+'(e)(s)':(pp.endsWith('s')?pp+'(es)':pp+'(e)s');
+    return[pre+disp+rest,...list.map(x=>pre+x+rest)]});
+  return out;
+}
+const SUBJ=['je','tu','il/elle/on','nous','vous','ils/elles'];
+function subj(k,form,impers){if(impers)return'il';if(k===0)return VOWEL.test(form)?"j'":'je';return SUBJ[k]}
+function fullForm(k,form,impers){const s=subj(k,form,impers);return s==="j'"?s+form:s+' '+form}
+function fullSpeak(k,form,impers){const s=impers?'il':(['je','tu','il','nous','vous','ils'][k]);const f=form.replace(/\([^)]*\)/g,'');return (k===0&&!impers&&VOWEL.test(f))?"j'"+f:s+' '+f}
+/*END ENGINE*/
+
+const BUILTIN=[['être','lenni'],['avoir','birtokolni, van valamije'],['aller','menni'],['faire','csinálni'],['dire','mondani'],['pouvoir','tudni, képesnek lenni'],['vouloir','akarni'],['devoir','kell, tartozni'],['savoir','tudni (valamit)'],['voir','látni'],['venir','jönni'],['prendre','venni, fogni'],['mettre','tenni'],['partir','elindulni'],['sortir','kimenni'],['dormir','aludni'],['lire','olvasni'],['écrire','írni'],['boire','inni'],['connaître','ismerni'],['croire','hinni'],['vivre','élni'],['comprendre','megérteni'],['apprendre','tanulni'],['attendre','várni'],['répondre','válaszolni'],['vendre','eladni'],['entendre','hallani'],['finir','befejezni'],['choisir','választani'],['réussir','sikerülni'],['parler','beszélni'],['aimer','szeretni'],['manger','enni'],['commencer','kezdeni'],['acheter','vásárolni'],['préférer','jobban szeretni'],['appeler','hívni'],['jouer','játszani'],['regarder','nézni'],['écouter','hallgatni'],['travailler','dolgozni'],['habiter','lakni'],['arriver','megérkezni'],['rester','maradni'],['tomber','leesni'],['ouvrir','kinyitni'],['courir','futni'],['recevoir','kapni'],['envoyer','küldeni'],['payer','fizetni'],['nettoyer','takarítani'],['se lever','felkelni'],["s'appeler",'hívják (valahogy)'],['se laver','mosakodni'],["s'habiller",'felöltözni'],['se coucher','lefeküdni']].map(([fr,hu])=>({fr,hu}));
+
+const TIPS={
+ pres:'<b>-er igék</b> (parler): -e, -es, -e, -ons, -ez, -ent<br><b>-ir igék</b> (finir): -is, -is, -it, -issons, -issez, -issent<br><b>-re igék</b> (vendre): -s, -s, –, -ons, -ez, -ent<br>A rendhagyó igéket (être, avoir, aller, faire…) külön kell megtanulni.',
+ pc:'<b>avoir / être</b> jelen ideje + <b>participe passé</b> (-er → -é, -ir → -i, -re → -u).<br><b>être</b>-vel ragozódnak a mozgást, változást jelentő igék (aller, venir, arriver, partir, entrer, sortir, monter, descendre, naître, mourir, rester, tomber, retourner, devenir…) és <b>minden visszaható ige</b> (se lever). Ilyenkor a participe egyezik az alannyal: elle est allé<b>e</b>, ils sont allé<b>s</b>.',
+ imp:'Tő: a jelen idejű <b>nous</b>-alak -ons nélkül (nous finiss<s>ons</s> → finiss-)<br>Végződések: -ais, -ais, -ait, -ions, -iez, -aient<br>Egyetlen kivétel: être → <b>ét-</b> (j\'étais).',
+ fp:'<b>aller</b> jelen ideje + <b>főnévi igenév</b>: je vais manger = enni fogok.',
+ fs:'Tő: a <b>főnévi igenév</b> (-re végűeknél az e elhagyva: prendre → prendr-)<br>Végződések: -ai, -as, -a, -ons, -ez, -ont<br>Rendhagyó tövek: être → ser-, avoir → aur-, aller → ir-, faire → fer-, pouvoir → pourr-, vouloir → voudr-, venir → viendr-, voir → verr-, savoir → saur-, devoir → devr-.',
+ cond:'Tő: ugyanaz, mint a futur simple-ben (parler-, ser-, aur-…)<br>Végződések: az imparfait végződései: -ais, -ais, -ait, -ions, -iez, -aient<br>je voudrais = szeretnék.'
+};
+
+/* ---------- állapot ---------- */
+const USER=(document.querySelector('meta[name="mf-user"]')||{}).content||'';
+const KEY='monfrancais.v1:'+USER;
+try{const old=localStorage.getItem('monfrancais.v1');if(old&&USER&&!localStorage.getItem(KEY))localStorage.setItem(KEY,old);localStorage.removeItem('monfrancais.v1')}catch(e){}
+const toLogin=()=>location.replace('/login');
+function makeWord(fr,hu,type,note){fr=String(fr||'').trim();hu=String(hu||'').trim();const t=String(type||'').trim();return{id:hash(fold(norm(fr))),fr,hu,type:t,note:String(note||'').trim(),verb:detectVerb(fr,hu,t)}}
+function detectVerb(fr,hu,t){const tn=deacc(String(t||'').toLowerCase());if(tn&&/ige|verb/.test(tn))return !!verbInfo(fr,hu,false);if(tn&&!/kif|expr/.test(tn))return false;return !!verbInfo(fr,hu,true)}
+const SAMPLE=[['la maison','a ház'],['le chat','a macska'],['le chien','a kutya'],["l'école",'az iskola'],['le livre','a könyv'],['la fenêtre','az ablak'],["l'ami",'a barát'],["l'amie",'a barátnő'],['la famille','a család'],['le frère','a fiútestvér'],['la sœur','a lánytestvér'],['le petit-déjeuner','a reggeli'],["aujourd'hui",'ma'],['demain','holnap'],['toujours','mindig'],['beaucoup','sok, nagyon'],['la semaine','a hét'],["l'hiver",'a tél'],['le cahier','a füzet'],['manger','enni'],['parler','beszélni'],['finir','befejezni'],['prendre','venni, fogni'],['se lever','felkelni'],['avoir faim','éhesnek lenni'],['Comment ça va ?','Hogy vagy?'],["s'il te plaît",'kérlek'],['à bientôt','hamarosan találkozunk']];
+function sampleList(){return{id:'minta',name:'Minta – alapszavak',active:true,words:SAMPLE.map(([f,h])=>makeWord(f,h,'',''))}}
+function defaultState(){return{v:1,lists:[sampleList()],prog:{},settings:{size:12,csize:8,article:true,autoplay:true,rate:0.9,voice:'',tenses:['pres','pc'],cardDir:'fr',src:'smart',conjSrc:['lists','builtin']},stats:{days:{}},updatedAt:0}}
+function migrate(o){const d=defaultState();o=o||{};return{...d,...o,settings:{...d.settings,...(o.settings||{})},stats:{days:{},...(o.stats||{})},prog:o.prog||{},lists:Array.isArray(o.lists)?o.lists:d.lists}}
+function load(){try{const r=localStorage.getItem(KEY);if(r)return migrate(JSON.parse(r))}catch(e){}return defaultState()}
+function save(){S.updatedAt=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}pushCloud()}
+function allWords(onlyActive){const m=new Map();for(const l of S.lists){if(onlyActive&&l.active===false)continue;for(const w of l.words)if(!m.has(w.id))m.set(w.id,w)}return[...m.values()]}
+const activeWords=()=>allWords(true);
+const INT=[0,1,2,4,8,16,32];
+function grade(key,res){const p=S.prog[key]||{b:0,due:0,ok:0,bad:0};
+  if(res==='ok'){p.b=Math.min(6,p.b+1);p.ok++}else if(res==='near'){p.b=Math.max(0,p.b-1);p.bad++}else{p.b=0;p.bad++}
+  p.due=Date.now()+INT[p.b]*DAY-(p.b?4*3600e3:0);p.last=Date.now();S.prog[key]=p;const t=today();S.stats.days[t]=(S.stats.days[t]||0)+1;save()}
+function pickItems(items,n,src){const now=Date.now();const info=items.map(x=>({...x,p:S.prog[x.k]}));let sel;
+  if(src==='hard')sel=info.filter(x=>x.p&&x.p.bad>0).sort((a,b)=>(b.p.bad/(b.p.ok+b.p.bad+1))-(a.p.bad/(a.p.ok+a.p.bad+1)));
+  else if(src==='random')sel=shuffle(info);
+  else{const due=shuffle(info.filter(x=>x.p&&x.p.due<=now)).sort((a,b)=>a.p.b-b.p.b);const fresh=info.filter(x=>!x.p);const later=shuffle(info.filter(x=>x.p&&x.p.due>now)).sort((a,b)=>a.p.due-b.p.due);sel=[...due,...fresh,...later]}
+  return shuffle(sel.slice(0,n)).map(({p,...x})=>x)}
+function dueCount(skill,words){const now=Date.now();return words.filter(w=>{const p=S.prog['w|'+w.id+'|'+skill];return p&&p.due<=now}).length}
+function conjDue(){const now=Date.now();return Object.entries(S.prog).filter(([k,p])=>k.startsWith('c|')&&p.due<=now).length}
+function maxBox(w){return Math.max(0,...['rec','write','dict'].map(s=>(S.prog['w|'+w.id+'|'+s]||{}).b||0))}
+function hardWords(words){return words.map(w=>{let ok=0,bad=0;for(const s of ['rec','write','dict']){const p=S.prog['w|'+w.id+'|'+s];if(p){ok+=p.ok;bad+=p.bad}}return{w,ok,bad}}).filter(x=>x.bad>0).sort((a,b)=>(b.bad/(b.ok+b.bad+1))-(a.bad/(a.ok+a.bad+1))||b.bad-a.bad).map(x=>x.w)}
+function streak(){let n=0;const d=new Date();if(!S.stats.days[today()])d.setDate(d.getDate()-1);while(S.stats.days[fmtDay(d)]){n++;d.setDate(d.getDate()-1)}return n}
+
+/* ---------- felolvasás ---------- */
+let VOICES=[],frVoice=null,ttsCap=null;
+function rankVoice(vs){const sc=v=>(/fr[-_]FR/i.test(v.lang)?10:0)+(/google|premium|enhanced|natural|neural|online/i.test(v.name)?5:0)+(/amélie|amelie|thomas|audrey|marie|denise|henri|julie|paul|aurélie/i.test(v.name)?2:0);return vs.slice().sort((a,b)=>sc(b)-sc(a))[0]||null}
+function loadVoices(){if(!('speechSynthesis' in window))return;try{VOICES=speechSynthesis.getVoices().filter(v=>/^fr/i.test(v.lang));frVoice=VOICES.find(v=>v.voiceURI===S.settings.voice)||rankVoice(VOICES)}catch(e){}}
+function say(text,slow){text=String(text||'').trim();if(!text)return;
+  if('speechSynthesis' in window&&(frVoice||!ttsCap)){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='fr-FR';if(frVoice)u.voice=frVoice;u.rate=slow?Math.max(.4,S.settings.rate*.6):S.settings.rate;speechSynthesis.speak(u);return}catch(e){}}
+  if(ttsCap){ttsCap.speak(text,{language:'fr',rate:slow?.7:Math.min(1.5,Math.max(.7,S.settings.rate))}).catch(()=>{});return}
+  toast('Ezen az eszközön nem érhető el francia felolvasás.')}
+function speechStop(){try{speechSynthesis.cancel()}catch(e){}try{ttsCap&&ttsCap.stop()}catch(e){}}
+let unlocked=false;function unlockSpeech(){if(unlocked)return;unlocked=true;try{const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u)}catch(e){}}
+
+/* ---------- ékezetes billentyűk ---------- */
+const ACC=['é','è','ê','ë','à','â','ç','î','ï','ô','û','ù','ü','œ',"'"];
+const accentBar=()=>`<div class="accents">${ACC.map(c=>`<button type="button" tabindex="-1" data-ch="${esc(c)}">${esc(c)}</button>`).join('')}</div>`;
+let lastInput=null;
+document.addEventListener('focusin',e=>{if(e.target.matches&&e.target.matches('input.t'))lastInput=e.target});
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-ch]');if(!b)return;e.preventDefault();const el=lastInput&&document.contains(lastInput)?lastInput:$('#ans')||$('input.ci');if(!el||el.readOnly)return;const s=el.selectionStart??el.value.length,en=el.selectionEnd??s;el.setRangeText(b.dataset.ch,s,en,'end');el.focus()});
+const INP='autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" lang="fr"';
+
+/* ---------- útvonalak ---------- */
+const MODES={
+ kartyak:{title:'Szókártyák',ic:'🃏',skill:'rec',desc:'Fordítsd meg – tudtad?',long:'Nézd meg a szót, gondold végig a jelentését, aztán fordítsd meg a kártyát. Légy őszinte magadhoz! 🙂'},
+ kviz:{title:'Kvíz',ic:'🎯',skill:'rec',desc:'Válaszd ki a jót',long:'Négy lehetőség közül válaszd ki a helyeset. Jó bemelegítés, mielőtt írni kezdesz.'},
+ diktalas:{title:'Diktálás',ic:'🎧',skill:'dict',desc:'Hallás utáni írás',long:'Meghallgatod a szót vagy kifejezést, és leírod franciául – ékezetekkel együtt. A 🐢 gombbal lassabban is meghallgathatod.'},
+ iras:{title:'Írás',ic:'✍️',skill:'write',desc:'Magyarból franciára',long:'Látod a magyar jelentést, és leírod franciául. Ha elakadsz, a 💡 Súgás betűnként segít.'},
+ ragozas:{title:'Ragozás',ic:'🔁',skill:'conj',desc:'Igék minden személyben',long:''}
+};
+let SES=null,IMP=null,OPEN=null,CONFIRM=null;
+function route(){const h=location.hash.replace('#','');speechStop();if(SES&&SES.mode!==h)SES=null;window.scrollTo(0,0);
+  if(h==='szavak')return rLists();if(h==='beallitasok')return rSettings();
+  if(MODES[h])return SES?renderItem():(h==='ragozas'?rConjSetup():rSetup(h));
+  rHome()}
+window.addEventListener('hashchange',()=>{CONFIRM=null;route()});
+const ACT={};
+document.addEventListener('click',e=>{const a=e.target.closest('[data-act]');if(!a)return;const h=ACT[a.dataset.act];if(h){e.preventDefault();h(a,e)}});
+const back='<div class="row"><a class="btn sm light" href="#">← Vissza</a></div>';
+function chipGroup(key,opts,val){return`<div class="chips">${opts.map(o=>{const [v,l]=Array.isArray(o)?o:[o,String(o)];return`<span class="chip ${String(v)===String(val)?'on':''}" data-act="set" data-key="${key}" data-val="${v}">${esc(l)}</span>`}).join('')}</div>`}
+ACT.set=a=>{const k=a.dataset.key;let v=a.dataset.val;if(k==='size'||k==='csize')v=+v;S.settings[k]=v;save();route()};
+ACT.tog=a=>{const arr=S.settings[a.dataset.key];const i=arr.indexOf(a.dataset.val);if(i>=0)arr.splice(i,1);else arr.push(a.dataset.val);save();route()};
+function listChips(){if(!S.lists.length)return`<p>Még nincs szólistád. <a href="#szavak">Tölts fel egyet!</a></p>`;return`<label class="f" style="margin-top:0">Aktív szólisták</label><div class="chips">${S.lists.map(l=>`<span class="chip ${l.active!==false?'on':''}" data-act="togglelist" data-id="${esc(l.id)}">${esc(l.name)} · ${l.words.length}</span>`).join('')}</div>`}
+ACT.togglelist=a=>{const l=S.lists.find(x=>x.id===a.dataset.id);if(l){l.active=l.active===false;save();route()}};
+const SRC=[['smart','Okos (esedékes + új)'],['hard','Nehéz szavak'],['random','Véletlen']];
+
+/* ---------- főoldal ---------- */
+function rHome(){const words=activeWords();const learned=words.filter(w=>maxBox(w)>=4).length;const hard=hardWords(words).slice(0,5);
+  app.innerHTML=`<h1>Bonjour ! 👋</h1><p class="muted">Mit gyakorolunk ma? Napi 10 perc többet ér, mint heti egy óra.</p>
+  <div class="stats"><div class="stat"><b>🔥 ${streak()}</b><span>napos sorozat</span></div><div class="stat"><b>${S.stats.days[today()]||0}</b><span>válasz ma</span></div><div class="stat"><b>${words.length}</b><span>aktív szó</span></div><div class="stat"><b>⭐ ${learned}</b><span>megtanult szó</span></div></div>
+  <div class="grid">${Object.entries(MODES).map(([k,M])=>{const d=M.skill==='conj'?conjDue():dueCount(M.skill,words);return`<a class="mode" href="#${k}">${d?`<span class="badge" title="esedékes ismétlés">${d}</span>`:''}<span class="ic">${M.ic}</span><b>${M.title}</b><span>${M.desc}</span></a>`}).join('')}<a class="mode" href="#szavak"><span class="ic">📚</span><b>Szólisták</b><span>CSV feltöltés, szavak</span></a></div>
+  <div class="card mt">${listChips()}</div>
+  ${hard.length?`<div class="card"><h3>😬 A legnehezebb szavaid</h3><table class="words">${hard.map(w=>`<tr><td><b>${esc(w.fr)}</b></td><td>${esc(w.hu)}</td><td style="text-align:right"><button class="btn sm light" data-act="sayw" data-t="${esc(speakText(w.fr))}">🔊</button></td></tr>`).join('')}</table><p class="small muted mt">Tipp: gyakorlásnál válaszd a „Nehéz szavak” lehetőséget.</p></div>`:''}`}
+
+/* ---------- gyakorlás: beállítás ---------- */
+function rSetup(mode){const M=MODES[mode],st=S.settings,words=activeWords();
+  app.innerHTML=`${back}<h1 class="mt">${M.ic} ${M.title}</h1><p class="muted">${M.long}</p>
+  <div class="card">${listChips()}
+  <label class="f">Hány szó?</label>${chipGroup('size',[8,12,20,30],st.size)}
+  <label class="f">Melyik szavak?</label>${chipGroup('src',SRC,st.src)}
+  ${mode==='kartyak'?`<label class="f">Irány</label>${chipGroup('cardDir',[['fr','Francia → magyar'],['hu','Magyar → francia'],['mix','Vegyes']],st.cardDir)}`:''}
+  <p class="small muted mt">${words.length} szó az aktív listákban · ${dueCount(M.skill,words)} esedékes ismétlés. Az „Okos” mód azt hozza, amit épp ideje ismételni, plusz új szavakat. A hibás szavak a kör során újra előjönnek.</p>
+  <button class="btn block mt" data-act="start" data-mode="${mode}" ${words.length?'':'disabled'}>Indulás ▶</button></div>${speechWarn(mode)}`}
+function speechWarn(mode){if(mode!=='diktalas')return'';loadVoices();if(frVoice||ttsCap)return'';return`<div class="fb near small">⚠️ Nem találtam francia hangot ezen a böngészőn. Ha nem hallasz semmit, próbáld Chrome-ban (Android, Windows) vagy Safariban (iPhone), illetve telepíts francia hangot a rendszerbeállításokban.</div>`}
+ACT.start=a=>{const mode=a.dataset.mode,M=MODES[mode];const items=activeWords().map(w=>({w,k:'w|'+w.id+'|'+M.skill}));const sel=pickItems(items,S.settings.size,S.settings.src);
+  if(!sel.length){toast(S.settings.src==='hard'?'Még nincsenek nehéz szavak – előbb gyakorolj egy kicsit!':'Nincs szó a kiválasztott listákban.');return}startSession(mode,sel)};
+function startSession(mode,sel){SES={mode,queue:sel.map(x=>({...x,rep:0})),pos:0,right:0,wrong:0,first:{},mistakes:new Map(),answered:false};unlockSpeech();window.scrollTo(0,0);renderItem()}
+const cur=()=>SES.queue[SES.pos];
+function qHead(){const s=SES;return`<div class="qhead"><span>${s.pos+1} / ${s.queue.length}</span><span>✅ ${s.right} &nbsp; ❌ ${s.wrong}</span><button class="btn sm light" data-act="quit">Kilépés</button></div><div class="prog"><i style="width:${Math.round(s.pos/s.queue.length*100)}%"></i></div>`}
+function renderItem(){if(SES.pos>=SES.queue.length)return rFinish();({kartyak:rCard,kviz:rQuiz,diktalas:rDict,iras:rWrite,ragozas:rConj})[SES.mode]()}
+function answer(res){const s=SES,it=cur();if(s.answered)return;s.answered=true;grade(it.k,res);if(!(it.k in s.first))s.first[it.k]=res==='ok';
+  if(res==='ok')s.right++;else{s.wrong++;s.mistakes.set(it.k,it);if(it.rep<2)s.queue.splice(Math.min(s.queue.length,s.pos+3),0,{...it,rep:it.rep+1,opts:null,hints:0,d:null})}}
+function next(){if(!SES)return;SES.pos++;SES.answered=false;speechStop();renderItem()}
+ACT.next=()=>next();
+ACT.quit=()=>{SES=null;route()};
+const focusAns=()=>setTimeout(()=>{const el=$('#ans')||$('input.ci');el&&el.focus()},60);
+const OKMSG=['Bravo ! 🎉','Super ! ⭐','Excellent ! 🙌','Parfait ! ✨','Très bien ! 👏','Génial ! 🚀'];
+const MSG={accent:'Majdnem! Figyelj az ékezetekre. 🧐',artmiss:'Majdnem! Ne felejtsd el a névelőt (le / la / l\' …).',artwrong:'Majdnem! Rossz a névelő – jegyezd meg a szó nemét.',typo:'Majdnem! Egy betű eltérés.',hinted:'Helyes, de súgással – legközelebb menni fog egyedül is! 💪',bad:'Nem egészen – nézd meg a helyes választ!'};
+function fbHTML(r,user,w){const t=r.res==='ok'?pick(OKMSG):MSG[r.reason]||MSG.bad;let diff='';
+  if(r.res!=='ok'&&r.reason!=='hinted'){const d=diffHTML(norm(user),r.best);diff=`<div class="mt" style="text-align:left"><div class="small muted">A te válaszod:</div><div class="diff">${d.a||'<span class="muted">(üres)</span>'}</div><div class="small muted">Helyesen:</div><div class="diff">${d.b}</div></div>`}
+  return`<div class="fb ${r.res}"><h3>${t}</h3><div class="row" style="justify-content:center"><b style="font-size:22px">${esc(w.fr)}</b><button class="speak sm" data-act="say">🔊</button></div><div class="muted">${esc(w.hu)}${w.note?' · '+esc(w.note):''}</div>${diff}<button class="btn block mt" data-act="next" id="nextBtn">Tovább ⏎</button></div>`}
+ACT.say=()=>say(speakText(cur().w.fr));
+ACT.slow=()=>say(speakText(cur().w.fr),true);
+ACT.sayw=a=>say(a.dataset.t);
+
+/* kártyák */
+function rCard(){const it=cur(),w=it.w;const dir=it.d||(it.d=S.settings.cardDir==='mix'?(Math.random()<.5?'fr':'hu'):S.settings.cardDir);
+  const frSide=`<div class="big">${esc(w.fr)}</div><button class="speak sm mt" data-act="say">🔊</button>`;
+  const huSide=`<div class="big">${esc(w.hu)}</div>${w.note?`<div class="note">${esc(w.note)}</div>`:''}`;
+  app.innerHTML=`${qHead()}<div class="flip" id="flip" data-act="flip"><div class="inner"><div class="side prompt"><div class="small muted" style="position:absolute;top:14px">${dir==='fr'?'Mit jelent?':'Hogy mondod franciául?'}</div>${dir==='fr'?frSide:huSide}</div><div class="side back prompt">${dir==='fr'?huSide+`<div class="small muted mt">${esc(w.fr)}</div>`:frSide+`<div class="small muted mt">${esc(w.hu)}</div>`}</div></div></div>
+  <div class="row mt" id="cbtns"><button class="btn block" data-act="flip">Megfordítom</button></div><p class="small muted center">Billentyűk: szóköz = fordítás, 1 = még nem, 2 = tudtam</p>`;
+  if(dir==='fr'&&S.settings.autoplay)setTimeout(()=>say(speakText(w.fr)),250)}
+ACT.flip=()=>{const f=$('#flip');if(!f||f.classList.contains('on'))return;f.classList.add('on');if(cur().d==='hu')say(speakText(cur().w.fr));$('#cbtns').innerHTML=`<button class="btn red" style="flex:1" data-act="cardno">😕 Még nem</button><button class="btn green" style="flex:1" data-act="cardyes">🙂 Tudtam!</button>`};
+ACT.cardyes=()=>{answer('ok');next()};ACT.cardno=()=>{answer('bad');next()};
+
+/* kvíz */
+function rQuiz(){const it=cur();if(!it.opts){const dir=it.d=Math.random()<.5?'fr':'hu';const field=dir==='fr'?'hu':'fr';const others=shuffle(activeWords().filter(w=>w.id!==it.w.id&&norm(w[field])!==norm(it.w[field])));const ds=[...new Set([...others.filter(w=>w.verb===it.w.verb),...others])].slice(0,3);it.opts=shuffle([it.w,...ds])}
+  const fr=it.d==='fr';
+  app.innerHTML=`${qHead()}<div class="card"><div class="prompt"><div class="small muted">${fr?'Mit jelent?':'Melyik a helyes francia megfelelő?'}</div><div class="big mt">${esc(fr?it.w.fr:it.w.hu)}</div>${fr?'<button class="speak sm mt" data-act="say">🔊</button>':''}</div><div class="opts">${it.opts.map((w,i)=>`<button class="opt" data-act="opt" data-i="${i}"><kbd>${i+1}</kbd> ${esc(fr?w.hu:w.fr)}</button>`).join('')}</div><div id="fb"></div></div>`;
+  if(fr&&S.settings.autoplay)setTimeout(()=>say(speakText(it.w.fr)),250)}
+ACT.opt=a=>{if(SES.answered)return;const it=cur();const ok=it.opts[+a.dataset.i].id===it.w.id;answer(ok?'ok':'bad');
+  $$('.opt').forEach((b,i)=>{if(it.opts[i].id===it.w.id)b.classList.add('ok');else if(b===a)b.classList.add('bad')});say(speakText(it.w.fr));
+  if(ok)setTimeout(()=>{if(SES&&SES.answered&&cur()===it)next()},1000);
+  else{$('#fb').innerHTML=`<div class="fb bad"><b>${esc(it.w.fr)}</b> = ${esc(it.w.hu)}<button class="btn block mt" data-act="next" id="nextBtn">Tovább ⏎</button></div>`;$('#nextBtn').focus()}};
+
+/* diktálás + írás */
+function rDict(){const it=cur();
+  app.innerHTML=`${qHead()}<div class="card center"><p class="muted small">Hallgasd meg, és írd le franciául!</p>
+  <div class="row" style="justify-content:center;gap:16px"><button class="speak" data-act="say" aria-label="Lejátszás">🔊</button><button class="btn light" data-act="slow">🐢 Lassan</button></div>
+  <div id="hint" class="muted mt"></div>
+  <input id="ans" class="t answer mt" ${INP} placeholder="Írd ide…">${accentBar()}
+  <div class="row" id="btns" style="justify-content:center"><button class="btn light" data-act="hintd">💡 Jelentés</button><button class="btn light" data-act="dontknow">🤷 Nem tudom</button><button class="btn" data-act="check">Ellenőrzés</button></div><div id="fb"></div></div>`;
+  focusAns();if(S.settings.autoplay)setTimeout(()=>say(speakText(it.w.fr)),300)}
+ACT.hintd=()=>{$('#hint').innerHTML='Jelentése: <b>'+esc(cur().w.hu)+'</b>'};
+function rWrite(){const it=cur();it.hints=it.hints||0;const w=it.w;
+  app.innerHTML=`${qHead()}<div class="card center"><p class="muted small">Írd le franciául!</p><div class="prompt"><div class="big">${esc(w.hu)}</div>${w.note?`<div class="note">${esc(w.note)}</div>`:''}</div>
+  <div id="hint" class="hintline"></div>
+  <input id="ans" class="t answer mt" ${INP} placeholder="Írd ide…">${accentBar()}
+  <div class="row" id="btns" style="justify-content:center"><button class="btn light" data-act="hintw">💡 Súgás</button><button class="btn light" data-act="dontknow">🤷 Nem tudom</button><button class="btn" data-act="check">Ellenőrzés</button></div><div id="fb"></div></div>`;focusAns()}
+ACT.hintw=()=>{const it=cur();if(SES.answered)return;const t=norm(speakText(it.w.fr).replace(/[?!.]/g,''));it.hints=Math.min(t.length,it.hints+1);$('#hint').textContent=t.slice(0,it.hints)+t.slice(it.hints).replace(/[^ '-]/g,'•');focusAns()};
+function finishCheck(val,r){const it=cur();let res=r.res;if(SES.mode==='iras'&&it.hints>0&&res==='ok'){res='near';r={...r,res:'near',reason:'hinted'}}
+  answer(res);const inp=$('#ans');inp.readOnly=true;inp.classList.add(res);$('#btns').classList.add('hide');$('#fb').innerHTML=fbHTML(r,val,it.w);
+  if(SES.mode==='iras'||res!=='ok')say(speakText(it.w.fr));setTimeout(()=>{const b=$('#nextBtn');b&&b.focus()},30)}
+ACT.check=()=>{if(SES.answered){next();return}const val=$('#ans').value;if(!val.trim()){toast('Írj be valamit, vagy nyomd meg a „Nem tudom” gombot.');focusAns();return}finishCheck(val,checkWord(val,cur().w.fr))};
+ACT.dontknow=()=>{if(SES.answered)return;finishCheck('',{res:'bad',reason:'bad',best:variants(cur().w.fr)[0]||''})};
+
+/* ragozás */
+function listVerbs(){const m=new Map();for(const w of activeWords()){if(!w.verb)continue;const c=conjugate(w.fr);if(c&&!m.has(c.display))m.set(c.display,{fr:c.display,src:w.fr,hu:w.hu})}return[...m.values()]}
+function conjVerbs(){const m=new Map();const cs=S.settings.conjSrc;if(cs.includes('lists'))for(const v of listVerbs())m.set(v.fr,v);if(cs.includes('builtin'))for(const v of BUILTIN)if(!m.has(v.fr))m.set(v.fr,{fr:v.fr,src:v.fr,hu:v.hu});return[...m.values()]}
+function rConjSetup(){const st=S.settings,lv=listVerbs();
+  app.innerHTML=`${back}<h1 class="mt">🔁 Ragozás</h1><p class="muted">Töltsd ki az ige összes alakját (az alanyt nem kell beírni). A hibás feladatokat a kör során újra megkapod.</p>
+  <div class="card"><label class="f" style="margin-top:0">Igék</label><div class="chips">
+   <span class="chip ${st.conjSrc.includes('lists')?'on':''}" data-act="tog" data-key="conjSrc" data-val="lists">Saját listáim igéi · ${lv.length}</span>
+   <span class="chip ${st.conjSrc.includes('builtin')?'on':''}" data-act="tog" data-key="conjSrc" data-val="builtin">Gyakori igék · ${BUILTIN.length}</span></div>
+   ${lv.length?`<p class="small muted">${lv.slice(0,40).map(v=>esc(v.fr)).join(', ')}${lv.length>40?'…':''}</p>`:'<p class="small muted">Az aktív listáidban még nincs ige. A CSV-ben jelöld „ige” típussal, vagy a Szólisták oldalon kapcsold be.</p>'}
+   <label class="f">Igeidők</label><div class="chips">${TENSES.map(([k,n,h])=>`<span class="chip ${st.tenses.includes(k)?'on':''}" data-act="tog" data-key="tenses" data-val="${k}">${n} <span class="small">· ${h}</span></span>`).join('')}</div>
+   <label class="f">Hány feladat?</label>${chipGroup('csize',[5,8,12,20],st.csize)}
+   <label class="f">Melyik igék?</label>${chipGroup('src',SRC,st.src)}
+   <button class="btn block mt" data-act="startc">Indulás ▶</button></div>
+  <div class="card"><h2>📖 Ragozó szótár</h2><p class="small muted">Írj be egy igét, és megmutatom minden igeidőben.</p><div class="row"><input id="lk" class="t" style="flex:1;min-width:160px" ${INP} placeholder="pl. prendre, se lever, finir"><button class="btn" data-act="lookup">Mutasd</button></div>${accentBar()}<div id="lkout"></div></div>`}
+ACT.startc=()=>{const ts=S.settings.tenses;if(!ts.length){toast('Válassz legalább egy igeidőt!');return}const verbs=conjVerbs();if(!verbs.length){toast('Válassz igéket (saját lista vagy gyakori igék)!');return}
+  const items=[];for(const v of verbs)for(const t of TENSES.map(x=>x[0]).filter(x=>ts.includes(x)))items.push({k:'c|'+v.fr+'|'+t,v,tense:t});
+  const sel=pickItems(items,S.settings.csize||8,S.settings.src);if(!sel.length){toast('Még nincsenek nehéz igék – előbb gyakorolj egy kicsit!');return}startSession('ragozas',sel)};
+function rConj(){const it=cur();it.c=it.c||conjugate(it.v.src);const c=it.c,T=TN[it.tense],forms=c[it.tense];
+  const rows=forms.map((f,k)=>f?`<tr data-k="${k}"><td class="p">${esc(subj(k,f[0],c.impers))}</td><td><input class="t ci" ${INP}><div class="corr"></div></td><td style="width:1%"><button class="speak sm hide" data-act="sayk" data-k="${k}">🔊</button></td></tr>`:'').join('');
+  app.innerHTML=`${qHead()}<div class="card"><div class="center"><div class="prompt" style="padding:4px 0 10px"><div class="big">${esc(c.display)}</div><div class="note">${esc(it.v.hu)}</div></div><span class="pill">${T[1]}</span> <span class="pill a">${T[2]}</span> <span class="pill g">${esc(c.group)}</span></div>
+  <details class="tip"><summary>💡 Szabály</summary><div class="mt">${TIPS[it.tense]}</div></details>
+  <table class="conj mt">${rows}</table>${accentBar()}<button class="btn block" id="checkc" data-act="checkc">Ellenőrzés</button><div id="fb"></div></div>`;
+  focusAns()}
+const SUBJRE=/^(je |j'|tu |il |elle |on |nous |vous |ils |elles )/;
+function checkForm(user,alts){const u=norm(user);if(!u)return'bad';const keys=alts.map(a=>fold(norm(a)));const cands=[u,u.replace(SUBJRE,'')].map(fold);
+  if(cands.some(x=>keys.includes(x)))return'ok';if(cands.some(x=>keys.some(k=>deacc(k)===deacc(x))))return'near';return'bad'}
+ACT.checkc=()=>{const it=cur();if(SES.answered){next();return}const forms=it.c[it.tense];let worst='ok';
+  $$('table.conj tr[data-k]').forEach(tr=>{const k=+tr.dataset.k,inp=tr.querySelector('input');const r=checkForm(inp.value,forms[k]);tr.className=r;inp.readOnly=true;
+    if(r!=='ok')tr.querySelector('.corr').textContent='✔ '+fullForm(k,forms[k][0],it.c.impers);tr.querySelector('.speak').classList.remove('hide');
+    if(r==='bad')worst='bad';else if(r==='near'&&worst==='ok')worst='near'});
+  answer(worst);$('#checkc').classList.add('hide');
+  $('#fb').innerHTML=`<div class="fb ${worst}"><h3>${worst==='ok'?pick(OKMSG):worst==='near'?'Majdnem! Figyelj az ékezetekre. 🧐':'Nézd meg a javításokat, és mondd ki hangosan!'}</h3><button class="btn block" data-act="next" id="nextBtn">Tovább ⏎</button></div>`;setTimeout(()=>$('#nextBtn').focus(),30)};
+ACT.sayk=a=>{const it=cur(),k=+a.dataset.k;say(fullSpeak(k,it.c[it.tense][k][0],it.c.impers))};
+function conjTableHTML(c){return`<div class="center mt"><h2>${esc(c.display)}</h2><span class="pill g">${esc(c.group)}</span> <span class="pill ${c.etre?'r':''}">segédige: ${c.etre?'être':'avoir'}</span> <span class="pill a">participe passé: ${esc(c.pp)}</span></div>
+  <div class="grid2">${TENSES.map(([k,n,h])=>`<div class="tbox"><b>${n}</b> <span class="small muted">· ${h}</span><table class="conj">${c[k].map((f,i)=>f?`<tr class="say" data-act="sayw" data-t="${esc(fullSpeak(i,f[0],c.impers))}"><td class="p">${esc(subj(i,f[0],c.impers))}</td><td>${esc(f[0])}${f.length>1&&!c.etre||(k!=='pc'&&f.length>1)?` <span class="small muted">(${esc(f[1])})</span>`:''}</td></tr>`:'').join('')}</table></div>`).join('')}</div>
+  <p class="small muted">Koppints egy sorra a kiejtéshez. Ritka rendhagyó igéknél nézd meg a tankönyvben is.</p>`}
+ACT.lookup=()=>{const v=$('#lk').value;if(!v.trim())return;const c=conjugate(v);$('#lkout').innerHTML=c?conjTableHTML(c):`<div class="fb near">Ezt nem ismerem fel igeként. Főnévi igenevet írj, pl. <b>parler</b>, <b>finir</b>, <b>se laver</b>.</div>`};
+
+/* eredmény */
+function rFinish(){const s=SES;const keys=Object.keys(s.first),good=keys.filter(k=>s.first[k]).length,pct=keys.length?Math.round(good/keys.length*100):0;const mist=[...s.mistakes.values()];
+  const em=pct>=90?'🏆':pct>=70?'🌟':pct>=50?'💪':'📚';
+  const msg=pct>=90?'Fantastique ! Szuper munka!':pct>=70?'Très bien ! Így tovább!':pct>=50?'Pas mal ! A hibákat érdemes még egyszer átnézni.':'Courage ! A gyakorlás teszi a mestert.';
+  const row=it=>it.v?`<tr><td><b>${esc(it.v.fr)}</b></td><td>${esc(TN[it.tense][1])}</td><td></td></tr>`:`<tr><td><b>${esc(it.w.fr)}</b></td><td>${esc(it.w.hu)}</td><td style="text-align:right"><button class="btn sm light" data-act="sayw" data-t="${esc(speakText(it.w.fr))}">🔊</button></td></tr>`;
+  app.innerHTML=`<div class="card center"><div style="font-size:54px">${em}</div><div class="score">${pct}%</div><p class="muted">${good} / ${keys.length} elsőre helyes</p><p><b>${msg}</b></p>
+  <div class="row" style="justify-content:center">${mist.length?`<button class="btn red" data-act="retry">🔁 Hibák gyakorlása (${mist.length})</button>`:''}<button class="btn ghost" data-act="quit">Új kör</button><a class="btn light" href="#">Főoldal</a></div></div>
+  ${mist.length?`<div class="card"><h3>Ezeket érdemes még gyakorolni</h3><table class="words">${mist.map(row).join('')}</table></div>`:''}`}
+ACT.retry=()=>{const m=[...SES.mistakes.values()].map(({k,w,v,tense})=>({k,w,v,tense}));startSession(SES.mode,shuffle(m))};
+
+/* billentyűzet */
+document.addEventListener('keydown',e=>{const tag=(e.target.tagName||'').toLowerCase();
+  if(e.key==='Enter'&&e.target.id==='lk'){e.preventDefault();ACT.lookup();return}
+  if(!SES||SES.pos>=SES.queue.length)return;const m=SES.mode;
+  if(m==='kartyak'){if(e.key===' '&&tag!=='button'){e.preventDefault();ACT.flip()}else if($('#flip')&&$('#flip').classList.contains('on')){if(e.key==='1'||e.key==='ArrowLeft')ACT.cardno();else if(e.key==='2'||e.key==='ArrowRight')ACT.cardyes()}}
+  else if(m==='kviz'){const n=+e.key;if(n>=1&&n<=4&&!SES.answered){const b=$(`.opt[data-i="${n-1}"]`);b&&ACT.opt(b)}else if(e.key==='Enter'&&SES.answered&&tag!=='button'){next()}}
+  else if((m==='diktalas'||m==='iras')&&e.key==='Enter'&&tag==='input'){e.preventDefault();ACT.check()}
+  else if(m==='ragozas'&&e.key==='Enter'&&tag==='input'){e.preventDefault();if(SES.answered){next();return}const ins=$$('input.ci'),i=ins.indexOf(e.target);if(i>=0&&i<ins.length-1)ins[i+1].focus();else ACT.checkc()}
+});
+
+/* ---------- CSV ---------- */
+const TEMPLATE='francia;magyar;tipus;megjegyzes;lecke\nla maison;a ház;főnév;nőnem;1. lecke\nle livre;a könyv;főnév;;1. lecke\nmanger;enni;ige;nous mangeons;1. lecke\nse lever;felkelni;ige;visszaható;1. lecke\navoir faim;éhesnek lenni;ige;kifejezés;2. lecke\nle vélo | la bicyclette;a bicikli;főnév;;2. lecke\nComment ça va ?;Hogy vagy?;kifejezés;;2. lecke\n';
+function parseCSV(text){text=text.replace(/^﻿/,'').replace(/\r\n?/g,'\n');const lines=text.split('\n').filter(l=>l.trim());if(!lines.length)return[];
+  const head=lines.slice(0,6);let d=[';','\t',','].find(c=>head.every(l=>l.includes(c)))||[';','\t',','].find(c=>head.some(l=>l.includes(c)));
+  if(!d)return lines.map(l=>{const m=l.split(/\s+[-–—=:]\s+/);return m.length>1?[m[0],m.slice(1).join(' – ')]:[l]});
+  const rows=[];let row=[],f='',q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+    else if(c==='"'&&!f.trim())q=true;else if(c===d){row.push(f);f=''}else if(c==='\n'){row.push(f);rows.push(row);row=[];f=''}else f+=c}
+  row.push(f);rows.push(row);return rows.map(r=>r.map(x=>x.trim())).filter(r=>r.some(x=>x))}
+const HDR={fr:['francia','french','fr','francais','mot','mots','szo','szavak','word','kifejezes','expression','vocabulaire'],hu:['magyar','hungarian','hu','hongrois','jelentes','meaning','forditas','traduction'],type:['tipus','type','szofaj','fajta','nature','categorie','kategoria'],note:['megjegyzes','note','notes','pelda','example','exemple','remarque','info','peldamondat'],lesson:['lecke','lesson','tema','fejezet','unite','chapitre','lista','temakor']};
+const TYPERE=/^(ige|verb|verbe|v|fonev|nom|n|mellekne?v|adj|adjectif|hatarozoszo|hsz|adv|adverbe|kifejezes|kif|expression|eloljaro|elolj|preposition|prep|nevmas|pronom|szam|kotoszo)\.?$/;
+function mapRows(rows){if(!rows.length)return[];const h=rows[0].map(x=>deacc(x.toLowerCase()).replace(/[^a-z]/g,''));const found={};h.forEach((x,i)=>{for(const k in HDR)if(found[k]==null&&HDR[k].includes(x))found[k]=i});
+  let idx,hasH=false;
+  if(found.fr!=null||found.hu!=null){hasH=true;idx={fr:found.fr??(found.hu===0?1:0),hu:found.hu??(found.fr===1?0:1),type:found.type??-1,note:found.note??-1,lesson:found.lesson??-1}}
+  else{const c2=rows.map(r=>r[2]).filter(Boolean);const looksType=c2.length&&c2.filter(x=>TYPERE.test(deacc(x.toLowerCase()).replace(/\s/g,''))).length>=c2.length*.6;idx=looksType?{fr:0,hu:1,type:2,note:3,lesson:-1}:{fr:0,hu:1,type:-1,note:2,lesson:-1}}
+  const g=(r,i)=>i>=0?(r[i]||''):'';
+  return rows.slice(hasH?1:0).map(r=>({fr:g(r,idx.fr),hu:g(r,idx.hu),type:g(r,idx.type),note:g(r,idx.note),lesson:g(r,idx.lesson)})).filter(x=>x.fr&&x.hu)}
+async function readFile(file){const buf=await file.arrayBuffer();let text,warn='';try{text=new TextDecoder('utf-8',{fatal:true}).decode(buf)}catch(e){try{text=new TextDecoder('windows-1250').decode(buf)}catch(e2){text=new TextDecoder('iso-8859-1').decode(buf)}warn='A fájl nem UTF-8 kódolású (valószínűleg Excelből mentve). Ha hibás betűket látsz (pl. è, à, ê, œ helyett ?), mentsd újra „CSV UTF-8” formátumban, vagy használd a Google Táblázatot.'}
+  if(/[a-zà-ÿ]\?[a-zà-ÿ]/i.test(text)&&!warn)warn='Néhány szóban kérdőjel van betű helyett – lehet, hogy elveszett egy ékezetes betű a mentéskor.';return{text,warn}}
+function buildImport(text,name,warn){let rows=mapRows(parseCSV(text));if(!rows.length){toast('Nem találtam szavakat. Két oszlop kell: francia és magyar.');return}
+  const huLike=r=>/^(a|az|egy) /i.test(r.fr)||/[őű]/i.test(r.fr),frLike=r=>/^(le |la |les |l'|un |une |des )/i.test(r.hu)||/[èêçœàù]/i.test(r.hu);
+  const sc=rows.filter(r=>huLike(r)&&!huLike({fr:r.hu})).length+rows.filter(frLike).length;let autoswap=false;
+  if(sc>rows.length*.5){rows=rows.map(r=>({...r,fr:r.hu,hu:r.fr}));autoswap=true}
+  const lessons=[...new Set(rows.map(r=>r.lesson).filter(Boolean))];IMP={rows,name,warn,autoswap,lessons};rLists();setTimeout(()=>{const el=$('#imp');el&&el.scrollIntoView({behavior:'smooth',block:'start'})},50)}
+async function handleFile(file){try{const {text,warn}=await readFile(file);buildImport(text,file.name.replace(/\.[^.]+$/,''),warn)}catch(e){toast('Nem sikerült beolvasni a fájlt.')}}
+
+/* ---------- szólisták oldal ---------- */
+function dots(w){const b=maxBox(w);return`<span class="dots" title="tudás: ${b}/6">${[1,2,3,4,5,6].map(i=>`<i class="${i<=b?'f':''}"></i>`).join('')}</span>`}
+function impHTML(){const I=IMP;return`<div class="card" style="background:#fffdf8;box-shadow:none;border:2px solid var(--line);margin-top:14px"><h3>Előnézet: ${I.rows.length} szó</h3>${I.warn?`<div class="fb near small" style="text-align:left">${esc(I.warn)}</div>`:''}${I.autoswap?'<p class="small">↔ Úgy tűnt, az oszlopok fordítva vannak, ezért megcseréltem őket.</p>':''}
+  ${I.lessons.length?`<p class="small muted">A „lecke” oszlop alapján ${I.lessons.length} lista készül: ${I.lessons.map(esc).join(', ')}</p>`:`<label class="f">Lista neve</label><input id="impname" class="t" value="${esc(I.name)}">`}
+  <div style="overflow-x:auto"><table class="words mt"><tr><th>Francia</th><th>Magyar</th><th>Típus</th></tr>${I.rows.slice(0,8).map(r=>`<tr><td>${esc(r.fr)}</td><td>${esc(r.hu)}</td><td>${esc(r.type)||(detectVerb(r.fr,r.hu,'')?'<span class="pill g">ige</span>':'')}</td></tr>`).join('')}</table></div>${I.rows.length>8?`<p class="small muted">…és még ${I.rows.length-8} sor</p>`:''}
+  <div class="row mt"><button class="btn" data-act="doimp">✔ Hozzáadás</button><button class="btn light" data-act="swapimp">↔ Oszlopcsere</button><button class="btn light" data-act="cancelimp">Mégse</button></div></div>`}
+function listRowHTML(l){const nv=l.words.filter(w=>w.verb).length,ln=l.words.filter(w=>maxBox(w)>=4).length;
+  return`<div class="listrow"><label class="switch" title="aktív"><input type="checkbox" data-act="togglelist" data-id="${esc(l.id)}" ${l.active!==false?'checked':''}><span></span></label>
+  <div style="flex:1;min-width:140px"><b>${esc(l.name)}</b><div class="small muted">${l.words.length} szó · ${nv} ige · ${ln} megtanult</div></div>
+  <button class="btn sm ghost" data-act="open" data-id="${esc(l.id)}">${OPEN===l.id?'Bezár':'Szavak'}</button>
+  ${CONFIRM===l.id?`<button class="btn sm red" data-act="dellist" data-id="${esc(l.id)}">Biztos törlöd?</button><button class="btn sm light" data-act="cancelc">Mégse</button>`:`<button class="btn sm light" data-act="askdel" data-id="${esc(l.id)}" aria-label="Törlés">🗑️</button>`}</div>${OPEN===l.id?wordsHTML(l):''}`}
+function wordsHTML(l){return`<div style="overflow-x:auto"><table class="words"><tr><th>Francia</th><th>Magyar</th><th>Ige?</th><th></th></tr>${l.words.map(w=>`<tr><td><b>${esc(w.fr)}</b>${w.note?`<div class="small muted">${esc(w.note)}</div>`:''}<div>${dots(w)}</div></td><td>${esc(w.hu)}</td><td><span class="chip ${w.verb?'on':''}" style="padding:2px 9px;font-size:12px" data-act="togverb" data-l="${esc(l.id)}" data-w="${w.id}">${w.verb?'ige':'–'}</span></td><td style="white-space:nowrap;text-align:right"><button class="btn sm light" data-act="sayw" data-t="${esc(speakText(w.fr))}">🔊</button> <button class="btn sm light" data-act="delw" data-l="${esc(l.id)}" data-w="${w.id}" aria-label="Szó törlése">✕</button></td></tr>`).join('')}</table></div>
+  <div class="row mt"><input id="nfr" class="t" style="flex:1;min-width:130px" placeholder="francia" ${INP}><input id="nhu" class="t" style="flex:1;min-width:130px" placeholder="magyar"><button class="btn sm" data-act="addw" data-l="${esc(l.id)}">+ Új szó</button></div>
+  <div class="row mt" style="padding-bottom:10px"><button class="btn sm light" data-act="copyl" data-l="${esc(l.id)}">📋 Lista másolása (CSV)</button><button class="btn sm light" data-act="resetl" data-l="${esc(l.id)}">Haladás nullázása</button></div>`}
+function rLists(){
+  app.innerHTML=`${back}<h1 class="mt">📚 Szólisták</h1>
+  <div class="card"><h2>Új lista feltöltése</h2>
+   <div class="drop" id="drop" data-act="pick"><div style="font-size:34px">📄</div><b>Koppints ide, vagy húzd ide a CSV fájlt</b><div class="small muted">.csv vagy .txt · Excelből mentsd „CSV UTF-8” formátumban</div></div>
+   <input type="file" id="file" accept=".csv,.txt,text/csv,text/plain" class="hide">
+   <details class="mt"><summary><b>…vagy illeszd be a szavakat</b></summary><textarea id="paste" class="t mt" rows="6" placeholder="la maison;a ház&#10;manger;enni&#10;le chat - a macska"></textarea><input id="pname" class="t mt" placeholder="Lista neve (pl. 3. lecke)"><button class="btn ghost mt" data-act="parsepaste">Előnézet</button></details>
+   <div id="imp">${IMP?impHTML():''}</div>
+   <details class="tip"><summary>ℹ️ Milyen legyen a CSV?</summary><div class="mt">Soronként egy szó vagy kifejezés. Oszlopok: <b>francia ; magyar ; típus ; megjegyzés ; lecke</b> – csak az első kettő kötelező. Elválasztó lehet pontosvessző, vessző vagy tabulátor, az első sor lehet fejléc.<br>
+   • Igéknél a típus legyen <b>ige</b> – így a Ragozás is használja. (Ha üres, a program kitalálja: ha a magyar jelentés -ni végű, pl. „enni”.)<br>
+   • Kifejezés igével (pl. <i>avoir faim</i>) is ragozható.<br>
+   • Több jó megoldás: <b>|</b> jellel, pl. <i>le vélo | la bicyclette</i><br>
+   • Zárójeles rész elhagyható a válaszban: <i>(se) promener</i><br>
+   • Ha van <b>lecke</b> oszlop, leckénként külön lista készül. Azonos nevű listába töltve a szavak frissülnek, a haladás megmarad.
+   <pre class="code">${esc(TEMPLATE)}</pre><div class="row"><button class="btn sm ghost" data-act="dltpl">⬇️ Minta letöltése</button><button class="btn sm light" data-act="copytpl">📋 Minta másolása</button></div></div></details>
+  </div>
+  <div class="card"><h2>Listáim</h2>${S.lists.length?S.lists.map(listRowHTML).join(''):'<p class="muted">Még nincs listád.</p>'}</div>`;
+  const f=$('#file'),d=$('#drop');f.onchange=()=>{f.files[0]&&handleFile(f.files[0]);f.value=''};
+  d.ondragover=e=>{e.preventDefault();d.classList.add('over')};d.ondragleave=()=>d.classList.remove('over');d.ondrop=e=>{e.preventDefault();d.classList.remove('over');const x=e.dataTransfer.files[0];x&&handleFile(x)}}
+ACT.pick=()=>$('#file').click();
+ACT.parsepaste=()=>{const t=$('#paste').value;if(!t.trim()){toast('Előbb illessz be néhány sort.');return}buildImport(t,$('#pname').value.trim()||'Beillesztett lista','')};
+ACT.swapimp=()=>{IMP.rows=IMP.rows.map(r=>({...r,fr:r.hu,hu:r.fr}));IMP.autoswap=false;rLists()};
+ACT.cancelimp=()=>{IMP=null;rLists()};
+ACT.doimp=()=>{const base=($('#impname')&&$('#impname').value.trim())||IMP.name||'Új lista';let added=0,upd=0;const groups=new Map();
+  for(const r of IMP.rows){const n=r.lesson||base;if(!groups.has(n))groups.set(n,[]);groups.get(n).push(r)}
+  for(const [name,rows] of groups){let l=S.lists.find(x=>x.name===name);if(!l){l={id:'l'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),name,active:true,words:[]};S.lists.push(l)}
+    for(const r of rows){const w=makeWord(r.fr,r.hu,r.type,r.note);const i=l.words.findIndex(x=>x.id===w.id);if(i>=0){l.words[i]=w;upd++}else{l.words.push(w);added++}}}
+  IMP=null;save();rLists();toast(`Kész! ${added} új szó${upd?`, ${upd} frissítve`:''}.`)};
+ACT.open=a=>{OPEN=OPEN===a.dataset.id?null:a.dataset.id;rLists()};
+ACT.askdel=a=>{CONFIRM=a.dataset.id;rLists()};
+ACT.cancelc=()=>{CONFIRM=null;route()};
+ACT.dellist=a=>{S.lists=S.lists.filter(l=>l.id!==a.dataset.id);CONFIRM=null;save();rLists();toast('Lista törölve.')};
+const findL=a=>S.lists.find(l=>l.id===a.dataset.l);
+ACT.togverb=a=>{const l=findL(a),w=l&&l.words.find(x=>x.id===a.dataset.w);if(!w)return;if(!w.verb&&!conjugate(w.fr)){toast('Ezt nem tudom igeként ragozni.');return}w.verb=!w.verb;save();rLists()};
+ACT.delw=a=>{const l=findL(a);if(!l)return;l.words=l.words.filter(x=>x.id!==a.dataset.w);save();rLists()};
+ACT.addw=a=>{const l=findL(a),fr=$('#nfr').value.trim(),hu=$('#nhu').value.trim();if(!fr||!hu){toast('Írd be a francia és a magyar alakot is.');return}const w=makeWord(fr,hu,'','');const i=l.words.findIndex(x=>x.id===w.id);if(i>=0)l.words[i]=w;else l.words.push(w);save();rLists();setTimeout(()=>{const e=$('#nfr');e&&e.focus()},30)};
+ACT.resetl=a=>{const l=findL(a);if(!l)return;for(const w of l.words)for(const s of ['rec','write','dict'])delete S.prog['w|'+w.id+'|'+s];save();rLists();toast('A lista haladása nullázva.')};
+async function copyText(t,okMsg){try{await navigator.clipboard.writeText(t);toast(okMsg||'Kimásolva!')}catch(e){toast('A másolás nem sikerült ebben a nézetben.')}}
+const csvCell=s=>/[;"\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;
+ACT.copyl=a=>{const l=findL(a);copyText('francia;magyar;tipus;megjegyzes\n'+l.words.map(w=>[w.fr,w.hu,w.verb?'ige':w.type,w.note].map(csvCell).join(';')).join('\n'),'A lista kimásolva – beillesztheted egy táblázatba.')};
+ACT.copytpl=()=>copyText(TEMPLATE,'Minta kimásolva.');
+ACT.dltpl=()=>{try{const u=URL.createObjectURL(new Blob(['\ufeff'+TEMPLATE],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=u;a.download='francia-szavak-minta.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}catch(e){copyText(TEMPLATE,'A letöltés itt nem érhető el – a mintát kimásoltam.')}};
+
+/* ---------- beállítások ---------- */
+function switchRow(key,label){return`<div class="row mt" style="justify-content:space-between;flex-wrap:nowrap"><span>${label}</span><label class="switch"><input type="checkbox" data-act="sw" data-key="${key}" ${S.settings[key]?'checked':''}><span></span></label></div>`}
+ACT.sw=a=>{S.settings[a.dataset.key]=!S.settings[a.dataset.key];save();route()};
+function rSettings(){loadVoices();const st=S.settings;
+  app.innerHTML=`${back}<h1 class="mt">⚙️ Beállítások</h1>
+  <div class="card"><h2>🔊 Felolvasás</h2>${VOICES.length?`<label class="f">Francia hang</label><select class="t" id="voice">${VOICES.map(v=>`<option value="${esc(v.voiceURI)}" ${frVoice&&v.voiceURI===frVoice.voiceURI?'selected':''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')}</select>`:`<p class="muted small">${ttsCap?'A böngésző nem kínál francia hangot, ezért a Claude hangját használom.':'Nem találtam francia hangot ezen a böngészőn. Androidon és Windowson a Chrome, iPhone-on a Safari szokott működni; a rendszerbeállításokban francia hang is telepíthető.'}</p>`}
+  <label class="f">Sebesség: <span id="ratev">${st.rate}</span></label><input type="range" id="rate" min="0.5" max="1.2" step="0.05" value="${st.rate}" style="width:100%">
+  <button class="btn ghost mt" data-act="testvoice">▶ Próba</button>${switchRow('autoplay','Automatikus lejátszás')}</div>
+  <div class="card"><h2>✍️ Ellenőrzés</h2>${switchRow('article','A névelő kötelező (le / la / l\' / un / une)')}<p class="small muted">Bekapcsolva a névelő nélküli válasz csak „majdnem jó”. Ha a névelővel együtt tanulod, a szó nemét is megjegyzed.</p></div>
+  <div class="card"><h2>👤 Fiók</h2><div class="row" style="justify-content:space-between"><span>Belépve: <b>${esc(USER)}</b></span><button class="btn sm light" data-act="logout">Kilépés</button></div></div>
+  <div class="card"><h2>💾 Mentés</h2><p class="small">${cloud.ready?'A haladás a szerveren is mentődik, így bármelyik eszközön megmarad, ahol ezt az oldalt megnyitod.':'A szerver most nem érhető el – a haladás addig ebben a böngészőben mentődik, és később automatikusan feltöltöm.'}</p>
+  <div class="row"><button class="btn sm ghost" data-act="copybak">📋 Mentés másolása</button><button class="btn sm ghost" data-act="dlbak">⬇️ Mentés letöltése</button></div>
+  <details class="mt"><summary>Mentés visszatöltése</summary><textarea id="bak" class="t mt" rows="4" placeholder="Illeszd be a korábban kimásolt mentést"></textarea><button class="btn sm mt" data-act="loadbak">Visszatöltés</button></details>
+  <div class="mt">${CONFIRM==='reset'?`<button class="btn sm red" data-act="resetall">Biztosan törlöd az összes haladást?</button> <button class="btn sm light" data-act="cancelc">Mégse</button>`:`<button class="btn sm light" data-act="askreset">Összes haladás nullázása</button>`}</div></div>`;
+  const v=$('#voice');if(v)v.onchange=()=>{S.settings.voice=v.value;save();loadVoices();say('Bonjour !')};
+  const r=$('#rate');r.oninput=()=>{$('#ratev').textContent=r.value};r.onchange=()=>{S.settings.rate=+r.value;save()}}
+ACT.testvoice=()=>{S.settings.rate=+$('#rate').value;say('Bonjour ! Comment ça va ? Je m\'appelle Claude.')};
+ACT.copybak=()=>copyText(JSON.stringify(S),'Mentés kimásolva – tedd el egy jegyzetbe.');
+ACT.dlbak=()=>{const u=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download='mon-francais-mentes-'+today()+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)};
+ACT.loadbak=()=>{try{const o=JSON.parse($('#bak').value);if(!o||!Array.isArray(o.lists))throw 0;S=migrate(o);save();toast('Mentés visszatöltve!');location.hash=''}catch(e){toast('Ez nem érvényes mentés.')}};
+ACT.askreset=()=>{CONFIRM='reset';rSettings()};
+ACT.logout=async()=>{try{if(cloud.ready){clearTimeout(cloud.t);await putState()}}catch(e){}try{await fetch('/api/logout',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})}catch(e){}toLogin()};
+ACT.resetall=()=>{S.prog={};S.stats={days:{}};CONFIRM=null;save();rSettings();toast('Haladás nullázva.')};
+
+/* ---------- szerver-mentés ---------- */
+const cloud={ready:false,writing:false,pending:false,t:0};
+function setSync(s){const el=$('#sync');if(!el)return;el.textContent=s==='ok'?'☁️':s==='err'?'⚠️':'';el.title=s==='ok'?'Mentve a szerverre':s==='err'?'A szerver-mentés nem sikerült (a helyi mentés megvan, később újrapróbálom)':''}
+async function putState(keepalive){const r=await fetch('/api/state',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({json:JSON.stringify(S),updatedAt:S.updatedAt}),keepalive:!!keepalive});
+  if(r.status===401){toLogin();return}if(r.status===409){const d=await r.json();adopt(d);return}if(!r.ok)throw new Error('HTTP '+r.status)}
+function adopt(d){try{S=migrate(JSON.parse(d.json));S.updatedAt=d.updatedAt;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}if(!SES)route()}catch(e){}}
+function pushCloud(){if(!cloud.ready)return;clearTimeout(cloud.t);cloud.t=setTimeout(async()=>{if(cloud.writing){cloud.pending=true;return}cloud.writing=true;
+  try{await putState();setSync('ok')}catch(e){setSync('err');cloud.retry=true}
+  cloud.writing=false;if(cloud.pending){cloud.pending=false;pushCloud()}},1500)}
+async function initCloud(){
+  try{const r=await fetch('/api/state',{cache:'no-store'});if(r.status===401){toLogin();return}if(!r.ok&&r.status!==204)throw new Error('HTTP '+r.status);
+    const d=r.status===204?null:await r.json();
+    if(d&&typeof d.json==='string'&&(d.updatedAt||0)>(S.updatedAt||0))adopt(d);
+    cloud.ready=true;setSync('ok');if(!d||(d.updatedAt||0)<(S.updatedAt||0))pushCloud()}
+  catch(e){setSync('err');setTimeout(initCloud,15000)}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&cloud.ready&&cloud.t){clearTimeout(cloud.t);cloud.t=0;putState(true).catch(()=>{})}});
+window.addEventListener('online',()=>{if(cloud.ready)pushCloud();else initCloud()});
+setInterval(()=>{if(cloud.retry&&cloud.ready){cloud.retry=false;pushCloud()}},30000);
+
+/* ---------- indulás ---------- */
+let S=load();
+if('speechSynthesis' in window){loadVoices();try{speechSynthesis.onvoiceschanged=loadVoices}catch(e){}}
+route();
+setTimeout(()=>initCloud(),0);
+</script>
+</body>
+</html>

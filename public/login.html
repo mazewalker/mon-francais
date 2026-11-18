@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mon Français – belépés</title>
+<meta name="theme-color" content="#fbf7f0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,800&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf7f0;--card:#fff;--ink:#1c2140;--muted:#6a6f8c;--line:#ebe4d8;--blue:#2f4fd8;--blue-soft:#e8edff;--red:#e5484d;--red-soft:#fdeaea;--r:18px;--shadow:0 1px 2px rgba(28,33,64,.06),0 6px 20px rgba(28,33,64,.06)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,-apple-system,sans-serif;font-size:17px;line-height:1.45}
+button,input{font:inherit;color:inherit}
+a{color:var(--blue)}
+.wrap{max-width:420px;margin:0 auto;padding:40px 16px}
+.brand{display:flex;align-items:center;justify-content:center;gap:10px;font-family:Fraunces,serif;font-weight:800;font-size:30px;margin-bottom:22px}
+.flag{display:inline-flex;width:34px;height:24px;border-radius:5px;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.08)}
+.flag i{flex:1}.flag i:nth-child(1){background:#2f4fd8}.flag i:nth-child(2){background:#fff}.flag i:nth-child(3){background:#e5484d}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:22px}
+h1{font-family:Fraunces,serif;font-size:24px;margin:0 0 4px}
+p{margin:0 0 8px}.muted{color:var(--muted)}.small{font-size:14px}
+label{display:block;font-weight:800;font-size:14px;margin:14px 0 6px}
+input{width:100%;border:2px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;outline:none}
+input:focus{border-color:var(--blue)}
+.btn{width:100%;border:0;border-radius:14px;padding:12px 18px;font-weight:800;cursor:pointer;background:var(--blue);color:#fff;min-height:48px;margin-top:20px}
+.btn:disabled{opacity:.6;cursor:default}
+.err{background:var(--red-soft);color:#a3262a;border-radius:12px;padding:10px 12px;margin-top:14px;font-weight:700;display:none}
+.switch{text-align:center;margin-top:16px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><span class="flag"><i></i><i></i><i></i></span>Mon Français</div>
+
+  <form class="card" id="login">
+    <h1>Belépés</h1>
+    <p class="muted small">Jó újra látni! 👋</p>
+    <label for="lu">Felhasználónév</label>
+    <input id="lu" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+    <label for="lp">Jelszó</label>
+    <input id="lp" name="password" type="password" autocomplete="current-password" required>
+    <div class="err" role="alert"></div>
+    <button class="btn" type="submit">Belépés</button>
+    <p class="switch small muted">Meghívód van? <a href="/register">Regisztrálj</a></p>
+  </form>
+
+  <form class="card" id="register" hidden>
+    <h1>Regisztráció</h1>
+    <p class="muted small">Regisztrálni csak meghívókóddal lehet.</p>
+    <label for="ri">Meghívókód</label>
+    <input id="ri" name="invite" autocapitalize="characters" autocomplete="off" spellcheck="false" required>
+    <label for="ru">Felhasználónév</label>
+    <input id="ru" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required pattern="[A-Za-z0-9][A-Za-z0-9._\-]{1,31}" title="2–32 karakter: betűk, számok, pont, kötőjel, aláhúzás">
+    <p class="small muted" style="margin-top:4px">2–32 karakter, ékezetek nélkül (pl. anna vagy kis.peti).</p>
+    <label for="rp">Jelszó</label>
+    <input id="rp" name="password" type="password" autocomplete="new-password" minlength="6" required>
+    <label for="rp2">Jelszó még egyszer</label>
+    <input id="rp2" type="password" autocomplete="new-password" minlength="6" required>
+    <div class="err" role="alert"></div>
+    <button class="btn" type="submit">Fiók létrehozása</button>
+    <p class="switch small muted">Már van fiókod? <a href="/login">Lépj be</a></p>
+  </form>
+</div>
+<script>
+'use strict';
+const MSG={bad_credentials:'Hibás felhasználónév vagy jelszó.',bad_invite:'Ez a meghívókód érvénytelen, lejárt vagy már felhasználták.',bad_username:'A felhasználónév 2–32 karakter lehet: betűk, számok, pont, kötőjel, aláhúzás.',short_password:'A jelszó legalább 6 karakter legyen.',username_taken:'Ez a felhasználónév már foglalt.',too_many_attempts:'Túl sok próbálkozás. Várj egy kicsit, és próbáld újra.'};
+const params=new URLSearchParams(location.search);
+const isReg=location.pathname==='/register'||params.has('invite');
+const login=document.getElementById('login'),reg=document.getElementById('register');
+login.hidden=isReg;reg.hidden=!isReg;
+if(params.get('invite'))document.getElementById('ri').value=params.get('invite');
+(isReg?(params.get('invite')?document.getElementById('ru'):document.getElementById('ri')):document.getElementById('lu')).focus();
+
+function showErr(form,msg){const e=form.querySelector('.err');e.textContent=msg;e.style.display=msg?'block':'none'}
+async function submit(form,url,body){
+  const btn=form.querySelector('button');btn.disabled=true;showErr(form,'');
+  try{const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d=await r.json().catch(()=>({}));
+    if(r.ok){location.replace('/');return}
+    showErr(form,MSG[d.error]||'Valami hiba történt. Próbáld újra.')}
+  catch(e){showErr(form,'Nem érem el a szervert. Van internet?')}
+  btn.disabled=false}
+login.onsubmit=e=>{e.preventDefault();submit(login,'/api/login',{username:login.username.value.trim(),password:login.password.value})};
+reg.onsubmit=e=>{e.preventDefault();
+  if(reg.password.value!==document.getElementById('rp2').value){showErr(reg,'A két jelszó nem egyezik.');return}
+  submit(reg,'/api/register',{invite:reg.invite.value.trim(),username:reg.username.value.trim(),password:reg.password.value})};
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      - PORT=3000
+      - DATA_DIR=/data
+      # Used by `make invite` to print full invite links, e.g. https://francia.example.com
+      - PUBLIC_URL=${PUBLIC_URL:-}
+    volumes:
+      # Named volume -> survives redeploys, rebuilds and container restarts
+      - mon-francais-data:/data
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  mon-francais-data:
