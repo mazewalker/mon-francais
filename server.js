@@ -9,6 +9,7 @@ const store = require('./store');
 const PORT = +process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const BASE_DICTIONARY = path.join(__dirname, 'dictionary', 'base.csv');
+const VERSION = require('./package.json').version; // bumped automatically on every merge to main (.github/workflows/version-bump.yml)
 const COOKIE = 'mf_session';
 const MAX_BODY = 10 * 1024 * 1024;
 
@@ -171,7 +172,7 @@ const api = {
 const escAttr = s => String(s).replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`);
 
 async function page(res, file, inject) {
-  let html = await fsp.readFile(path.join(PUBLIC_DIR, file), 'utf8');
+  let html = (await fsp.readFile(path.join(PUBLIC_DIR, file), 'utf8')).replaceAll('__APP_VERSION__', VERSION);
   if (inject) html = html.replace('<head>', `<head>\n${inject}`);
   send(res, 200, html, { 'Content-Type': TYPES['.html'], 'X-Frame-Options': 'SAMEORIGIN' });
 }
@@ -187,7 +188,7 @@ const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://x');
   const { pathname } = url;
   try {
-    if (pathname === '/health') return json(res, 200, { ok: true });
+    if (pathname === '/health') return json(res, 200, { ok: true, version: VERSION });
     const handler = api[`${req.method} ${pathname}`];
     if (handler) return await handler(req, res, url);
     if (pathname.startsWith('/api/')) return json(res, 404, { error: 'not found' });
@@ -209,5 +210,5 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => console.log(`Mon Français on :${PORT}, data in ${store.DATA_DIR}`));
+server.listen(PORT, () => console.log(`Mon Français v${VERSION} on :${PORT}, data in ${store.DATA_DIR}`));
 for (const sig of ['SIGTERM', 'SIGINT']) process.on(sig, () => server.close(() => store.pendingWrites().then(() => process.exit(0))));

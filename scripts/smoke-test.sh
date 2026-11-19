@@ -53,4 +53,8 @@ check "$(code -b "$DATA_DIR/cb" -X POST -H "$J" -d '{}' "$B/api/logout")" 200 "l
 check "$(code -b "$DATA_DIR/cb" "$B/api/me")" 401 "session gone after logout"
 node cli.js users | grep -q '^anna' || fail "cli users"; echo "ok  cli lists users"
 check "$(code --path-as-is "$B/../store.js")" 404 "no path traversal"
+V=$(node -p 'require("./package.json").version')
+curl -s "$B/login" | grep -q "v$V</footer>" || fail "login page shows version"; echo "ok  login page shows v$V"
+curl -s -b "$DATA_DIR/cc" "$B/" | grep -q "v$V</footer>" || fail "app shows version"; echo "ok  app page shows v$V"
+curl -s "$B/health" | grep -q "\"version\":\"$V\"" || fail "health reports version"; echo "ok  /health reports version"
 echo "All good."
