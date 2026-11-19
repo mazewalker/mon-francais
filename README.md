@@ -84,6 +84,15 @@ If you use the **Dockerfile** build pack instead, add a Persistent Storage entry
 For off-server safety, enable Coolify backups or copy `/data` elsewhere now and then.
 Users can also download their own backup from Settings → "Mentés letöltése".
 
+## Versioning
+
+The version lives in `package.json` and is shown at the bottom of every page (and in `/health`).
+It is bumped automatically: on every push to `main` (every merged PR) the **Version bump** GitHub Action
+bumps the patch version, commits `Release vX.Y.Z` and tags it. Put `#minor` or `#major` in the PR title
+for a bigger bump, or `[skip bump]` in the commit message to skip it. Don't edit the version by hand.
+
+Coolify may deploy twice per merge (the merge commit, then the release commit); the second one carries the new version.
+
 ## Development
 
 ```

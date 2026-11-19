@@ -1,0 +1,56 @@
+# Bumps package.json's version on every push to main (i.e. every merged PR),
+# commits it back and tags it (vX.Y.Z). The app shows this version in the page footer.
+#
+# Default bump is patch. Put "#minor" or "#major" in the PR title (it ends up in the
+# merge commit message) to bump more. "[skip bump]" in the commit message skips it.
+name: Version bump
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: version-bump
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    if: ${{ !contains(github.event.head_commit.message, '[skip bump]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Pick bump level from the commit message
+        id: level
+        env:
+          MSG: ${{ github.event.head_commit.message }}
+        run: |
+          level=patch
+          if printf '%s' "$MSG" | grep -qi '#major'; then level=major
+          elif printf '%s' "$MSG" | grep -qi '#minor'; then level=minor; fi
+          echo "level=$level" >> "$GITHUB_OUTPUT"
+
+      - name: Bump, commit, tag, push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          v=$(npm version "${{ steps.level.outputs.level }}" --no-git-tag-version)
+          git commit -am "Release ${v} [skip bump]"
+          git tag "${v}"
+          # Retry in case main moved while we ran.
+          for i in 1 2 3; do
+            git push origin HEAD:main && git push origin "${v}" && exit 0
+            git pull --rebase origin main
+            git tag -f "${v}"
+          done
+          exit 1
