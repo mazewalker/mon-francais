@@ -335,13 +335,23 @@ try{const old=localStorage.getItem('monfrancais.v1');if(old&&USER&&!localStorage
 const toLogin=()=>location.replace('/login');
 function makeWord(fr,hu,type,note){fr=String(fr||'').trim();hu=String(hu||'').trim();const t=String(type||'').trim();return{id:hash(fold(norm(fr))),fr,hu,type:t,note:String(note||'').trim(),verb:detectVerb(fr,hu,t)}}
 function detectVerb(fr,hu,t){const tn=deacc(String(t||'').toLowerCase());if(tn&&/ige|verb/.test(tn))return !!verbInfo(fr,hu,false);if(tn&&!/kif|expr/.test(tn))return false;return !!verbInfo(fr,hu,true)}
-const SAMPLE=[['la maison','a ház'],['le chat','a macska'],['le chien','a kutya'],["l'école",'az iskola'],['le livre','a könyv'],['la fenêtre','az ablak'],["l'ami",'a barát'],["l'amie",'a barátnő'],['la famille','a család'],['le frère','a fiútestvér'],['la sœur','a lánytestvér'],['le petit-déjeuner','a reggeli'],["aujourd'hui",'ma'],['demain','holnap'],['toujours','mindig'],['beaucoup','sok, nagyon'],['la semaine','a hét'],["l'hiver",'a tél'],['le cahier','a füzet'],['manger','enni'],['parler','beszélni'],['finir','befejezni'],['prendre','venni, fogni'],['se lever','felkelni'],['avoir faim','éhesnek lenni'],['Comment ça va ?','Hogy vagy?'],["s'il te plaît",'kérlek'],['à bientôt','hamarosan találkozunk']];
-function sampleList(){return{id:'minta',name:'Minta – alapszavak',active:true,words:SAMPLE.map(([f,h])=>makeWord(f,h,'',''))}}
-function defaultState(){return{v:1,lists:[sampleList()],prog:{},settings:{size:12,csize:8,article:true,autoplay:true,rate:0.9,voice:'',tenses:['pres','pc'],cardDir:'fr',src:'smart',conjSrc:['lists','builtin']},stats:{days:{}},updatedAt:0}}
+function defaultState(){return{v:1,lists:[],prog:{},settings:{size:12,csize:8,article:true,autoplay:true,rate:0.9,voice:'',tenses:['pres','pc'],cardDir:'fr',src:'smart',conjSrc:['lists','builtin'],baseOff:[]},stats:{days:{}},updatedAt:0}}
 function migrate(o){const d=defaultState();o=o||{};return{...d,...o,settings:{...d.settings,...(o.settings||{})},stats:{days:{},...(o.stats||{})},prog:o.prog||{},lists:Array.isArray(o.lists)?o.lists:d.lists}}
 function load(){try{const r=localStorage.getItem(KEY);if(r)return migrate(JSON.parse(r))}catch(e){}return defaultState()}
 function save(){S.updatedAt=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}pushCloud()}
-function allWords(onlyActive){const m=new Map();for(const l of S.lists){if(onlyActive&&l.active===false)continue;for(const w of l.words)if(!m.has(w.id))m.set(w.id,w)}return[...m.values()]}
+/* Alapszótár: közös, csak olvasható leckék (dictionary/base.csv a szerveren). Nem kerül a felhasználó mentésébe,
+   csak az, hogy melyik lecke van kikapcsolva (settings.baseOff); a haladás a szó azonosítójához tartozik, mint a saját listáknál. */
+let BASE=[];
+const BKEY='monfrancais.base';
+function buildBase(text){const groups=new Map();for(const r of mapRows(parseCSV(text))){const n=r.lesson||'Alapszótár';if(!groups.has(n))groups.set(n,[]);groups.get(n).push(makeWord(r.fr,r.hu,r.type,r.note))}
+  return[...groups].map(([name,words])=>({id:'base:'+hash(name),name,base:true,words}))}
+function loadBaseCached(){try{const t=localStorage.getItem(BKEY);if(t)BASE=buildBase(t)}catch(e){}}
+async function fetchBase(){try{const r=await fetch('/api/dictionary',{cache:'no-store'});if(r.status===401){toLogin();return}if(!r.ok)throw 0;const t=await r.text();
+    let same=false;try{same=localStorage.getItem(BKEY)===t;localStorage.setItem(BKEY,t)}catch(e){}if(same&&BASE.length)return;BASE=buildBase(t);if(!SES)route()}
+  catch(e){setTimeout(fetchBase,30000)}}
+const allLists=()=>[...S.lists,...BASE];
+const isActive=l=>l.base?!S.settings.baseOff.includes(l.id):l.active!==false;
+function allWords(onlyActive){const m=new Map();for(const l of allLists()){if(onlyActive&&!isActive(l))continue;for(const w of l.words)if(!m.has(w.id))m.set(w.id,w)}return[...m.values()]}
 const activeWords=()=>allWords(true);
 const INT=[0,1,2,4,8,16,32];
 function grade(key,res){const p=S.prog[key]||{b:0,due:0,ok:0,bad:0};
@@ -397,8 +407,20 @@ const back='<div class="row"><a class="btn sm light" href="#">← Vissza</a></di
 function chipGroup(key,opts,val){return`<div class="chips">${opts.map(o=>{const [v,l]=Array.isArray(o)?o:[o,String(o)];return`<span class="chip ${String(v)===String(val)?'on':''}" data-act="set" data-key="${key}" data-val="${v}">${esc(l)}</span>`}).join('')}</div>`}
 ACT.set=a=>{const k=a.dataset.key;let v=a.dataset.val;if(k==='size'||k==='csize')v=+v;S.settings[k]=v;save();route()};
 ACT.tog=a=>{const arr=S.settings[a.dataset.key];const i=arr.indexOf(a.dataset.val);if(i>=0)arr.splice(i,1);else arr.push(a.dataset.val);save();route()};
-function listChips(){if(!S.lists.length)return`<p>Még nincs szólistád. <a href="#szavak">Tölts fel egyet!</a></p>`;return`<label class="f" style="margin-top:0">Aktív szólisták</label><div class="chips">${S.lists.map(l=>`<span class="chip ${l.active!==false?'on':''}" data-act="togglelist" data-id="${esc(l.id)}">${esc(l.name)} · ${l.words.length}</span>`).join('')}</div>`}
-ACT.togglelist=a=>{const l=S.lists.find(x=>x.id===a.dataset.id);if(l){l.active=l.active===false;save();route()}};
+const listChip=l=>`<span class="chip ${isActive(l)?'on':''}" data-act="togglelist" data-id="${esc(l.id)}">${esc(l.name)} · ${l.words.length}</span>`;
+const DETOPEN={};
+document.addEventListener('toggle',e=>{const k=e.target.dataset&&e.target.dataset.keep;if(k)DETOPEN[k]=e.target.open},true);
+function baseChips(){if(!BASE.length)return'';const on=BASE.filter(isActive);
+  return`<details class="mt" data-keep="base" ${DETOPEN.base?'open':''}><summary><b>📘 Alapszótár</b> <span class="small muted">· ${on.length} / ${BASE.length} lecke aktív · ${on.reduce((n,l)=>n+l.words.length,0)} szó</span></summary>
+  <div class="row mt"><button class="btn sm light" data-act="baseall" data-on="1">Mind be</button><button class="btn sm light" data-act="baseall" data-on="0">Mind ki</button></div>
+  <div class="chips mt">${BASE.map(listChip).join('')}</div></details>`}
+function listChips(){const own=S.lists.length?`<div class="chips">${S.lists.map(listChip).join('')}</div>`:`<p class="small muted" style="margin:0">Még nincs saját szólistád. <a href="#szavak">Tölts fel egyet!</a></p>`;
+  return`<label class="f" style="margin-top:0">Aktív szólisták</label>${own}${baseChips()}`}
+ACT.togglelist=a=>{const id=a.dataset.id;const b=BASE.find(x=>x.id===id);
+  if(b){const off=S.settings.baseOff,i=off.indexOf(id);if(i>=0)off.splice(i,1);else off.push(id)}
+  else{const l=S.lists.find(x=>x.id===id);if(!l)return;l.active=l.active===false}
+  save();route()};
+ACT.baseall=a=>{S.settings.baseOff=a.dataset.on==='1'?[]:BASE.map(l=>l.id);save();route()};
 const SRC=[['smart','Okos (esedékes + új)'],['hard','Nehéz szavak'],['random','Véletlen']];
 
 /* ---------- főoldal ---------- */
@@ -487,7 +509,7 @@ function conjVerbs(){const m=new Map();const cs=S.settings.conjSrc;if(cs.include
 function rConjSetup(){const st=S.settings,lv=listVerbs();
   app.innerHTML=`${back}<h1 class="mt">🔁 Ragozás</h1><p class="muted">Töltsd ki az ige összes alakját (az alanyt nem kell beírni). A hibás feladatokat a kör során újra megkapod.</p>
   <div class="card"><label class="f" style="margin-top:0">Igék</label><div class="chips">
-   <span class="chip ${st.conjSrc.includes('lists')?'on':''}" data-act="tog" data-key="conjSrc" data-val="lists">Saját listáim igéi · ${lv.length}</span>
+   <span class="chip ${st.conjSrc.includes('lists')?'on':''}" data-act="tog" data-key="conjSrc" data-val="lists">Aktív listák igéi · ${lv.length}</span>
    <span class="chip ${st.conjSrc.includes('builtin')?'on':''}" data-act="tog" data-key="conjSrc" data-val="builtin">Gyakori igék · ${BUILTIN.length}</span></div>
    ${lv.length?`<p class="small muted">${lv.slice(0,40).map(v=>esc(v.fr)).join(', ')}${lv.length>40?'…':''}</p>`:'<p class="small muted">Az aktív listáidban még nincs ige. A CSV-ben jelöld „ige” típussal, vagy a Szólisták oldalon kapcsold be.</p>'}
    <label class="f">Igeidők</label><div class="chips">${TENSES.map(([k,n,h])=>`<span class="chip ${st.tenses.includes(k)?'on':''}" data-act="tog" data-key="tenses" data-val="${k}">${n} <span class="small">· ${h}</span></span>`).join('')}</div>
@@ -573,12 +595,12 @@ function impHTML(){const I=IMP;return`<div class="card" style="background:#fffdf
   <div style="overflow-x:auto"><table class="words mt"><tr><th>Francia</th><th>Magyar</th><th>Típus</th></tr>${I.rows.slice(0,8).map(r=>`<tr><td>${esc(r.fr)}</td><td>${esc(r.hu)}</td><td>${esc(r.type)||(detectVerb(r.fr,r.hu,'')?'<span class="pill g">ige</span>':'')}</td></tr>`).join('')}</table></div>${I.rows.length>8?`<p class="small muted">…és még ${I.rows.length-8} sor</p>`:''}
   <div class="row mt"><button class="btn" data-act="doimp">✔ Hozzáadás</button><button class="btn light" data-act="swapimp">↔ Oszlopcsere</button><button class="btn light" data-act="cancelimp">Mégse</button></div></div>`}
 function listRowHTML(l){const nv=l.words.filter(w=>w.verb).length,ln=l.words.filter(w=>maxBox(w)>=4).length;
-  return`<div class="listrow"><label class="switch" title="aktív"><input type="checkbox" data-act="togglelist" data-id="${esc(l.id)}" ${l.active!==false?'checked':''}><span></span></label>
+  return`<div class="listrow"><label class="switch" title="aktív"><input type="checkbox" data-act="togglelist" data-id="${esc(l.id)}" ${isActive(l)?'checked':''}><span></span></label>
   <div style="flex:1;min-width:140px"><b>${esc(l.name)}</b><div class="small muted">${l.words.length} szó · ${nv} ige · ${ln} megtanult</div></div>
   <button class="btn sm ghost" data-act="open" data-id="${esc(l.id)}">${OPEN===l.id?'Bezár':'Szavak'}</button>
-  ${CONFIRM===l.id?`<button class="btn sm red" data-act="dellist" data-id="${esc(l.id)}">Biztos törlöd?</button><button class="btn sm light" data-act="cancelc">Mégse</button>`:`<button class="btn sm light" data-act="askdel" data-id="${esc(l.id)}" aria-label="Törlés">🗑️</button>`}</div>${OPEN===l.id?wordsHTML(l):''}`}
-function wordsHTML(l){return`<div style="overflow-x:auto"><table class="words"><tr><th>Francia</th><th>Magyar</th><th>Ige?</th><th></th></tr>${l.words.map(w=>`<tr><td><b>${esc(w.fr)}</b>${w.note?`<div class="small muted">${esc(w.note)}</div>`:''}<div>${dots(w)}</div></td><td>${esc(w.hu)}</td><td><span class="chip ${w.verb?'on':''}" style="padding:2px 9px;font-size:12px" data-act="togverb" data-l="${esc(l.id)}" data-w="${w.id}">${w.verb?'ige':'–'}</span></td><td style="white-space:nowrap;text-align:right"><button class="btn sm light" data-act="sayw" data-t="${esc(speakText(w.fr))}">🔊</button> <button class="btn sm light" data-act="delw" data-l="${esc(l.id)}" data-w="${w.id}" aria-label="Szó törlése">✕</button></td></tr>`).join('')}</table></div>
-  <div class="row mt"><input id="nfr" class="t" style="flex:1;min-width:130px" placeholder="francia" ${INP}><input id="nhu" class="t" style="flex:1;min-width:130px" placeholder="magyar"><button class="btn sm" data-act="addw" data-l="${esc(l.id)}">+ Új szó</button></div>
+  ${l.base?'':CONFIRM===l.id?`<button class="btn sm red" data-act="dellist" data-id="${esc(l.id)}">Biztos törlöd?</button><button class="btn sm light" data-act="cancelc">Mégse</button>`:`<button class="btn sm light" data-act="askdel" data-id="${esc(l.id)}" aria-label="Törlés">🗑️</button>`}</div>${OPEN===l.id?wordsHTML(l):''}`}
+function wordsHTML(l){const ro=!!l.base;return`<div style="overflow-x:auto"><table class="words"><tr><th>Francia</th><th>Magyar</th><th>Ige?</th><th></th></tr>${l.words.map(w=>`<tr><td><b>${esc(w.fr)}</b>${w.note?`<div class="small muted">${esc(w.note)}</div>`:''}<div>${dots(w)}</div></td><td>${esc(w.hu)}</td><td><span class="chip ${w.verb?'on':''}" style="padding:2px 9px;font-size:12px${ro?';cursor:default':''}" ${ro?'':`data-act="togverb" data-l="${esc(l.id)}" data-w="${w.id}"`}>${w.verb?'ige':'–'}</span></td><td style="white-space:nowrap;text-align:right"><button class="btn sm light" data-act="sayw" data-t="${esc(speakText(w.fr))}">🔊</button>${ro?'':` <button class="btn sm light" data-act="delw" data-l="${esc(l.id)}" data-w="${w.id}" aria-label="Szó törlése">✕</button>`}</td></tr>`).join('')}</table></div>
+  ${ro?'':`<div class="row mt"><input id="nfr" class="t" style="flex:1;min-width:130px" placeholder="francia" ${INP}><input id="nhu" class="t" style="flex:1;min-width:130px" placeholder="magyar"><button class="btn sm" data-act="addw" data-l="${esc(l.id)}">+ Új szó</button></div>`}
   <div class="row mt" style="padding-bottom:10px"><button class="btn sm light" data-act="copyl" data-l="${esc(l.id)}">📋 Lista másolása (CSV)</button><button class="btn sm light" data-act="resetl" data-l="${esc(l.id)}">Haladás nullázása</button></div>`}
 function rLists(){
   app.innerHTML=`${back}<h1 class="mt">📚 Szólisták</h1>
@@ -595,7 +617,9 @@ function rLists(){
    • Ha van <b>lecke</b> oszlop, leckénként külön lista készül. Azonos nevű listába töltve a szavak frissülnek, a haladás megmarad.
    <pre class="code">${esc(TEMPLATE)}</pre><div class="row"><button class="btn sm ghost" data-act="dltpl">⬇️ Minta letöltése</button><button class="btn sm light" data-act="copytpl">📋 Minta másolása</button></div></div></details>
   </div>
-  <div class="card"><h2>Listáim</h2>${S.lists.length?S.lists.map(listRowHTML).join(''):'<p class="muted">Még nincs listád.</p>'}</div>`;
+  <div class="card"><h2>Listáim</h2>${S.lists.length?S.lists.map(listRowHTML).join(''):'<p class="muted">Még nincs saját listád.</p>'}</div>
+  ${BASE.length?`<div class="card"><h2>📘 Alapszótár</h2><p class="small muted">Közös szókincs leckénként, minden felhasználónak. Nem szerkeszthető, de kapcsolgathatod a leckéket, és a haladásod itt is mentődik.</p>
+   <div class="row"><button class="btn sm light" data-act="baseall" data-on="1">Mind be</button><button class="btn sm light" data-act="baseall" data-on="0">Mind ki</button></div>${BASE.map(listRowHTML).join('')}</div>`:''}`;
   const f=$('#file'),d=$('#drop');f.onchange=()=>{f.files[0]&&handleFile(f.files[0]);f.value=''};
   d.ondragover=e=>{e.preventDefault();d.classList.add('over')};d.ondragleave=()=>d.classList.remove('over');d.ondrop=e=>{e.preventDefault();d.classList.remove('over');const x=e.dataTransfer.files[0];x&&handleFile(x)}}
 ACT.pick=()=>$('#file').click();
@@ -611,7 +635,7 @@ ACT.open=a=>{OPEN=OPEN===a.dataset.id?null:a.dataset.id;rLists()};
 ACT.askdel=a=>{CONFIRM=a.dataset.id;rLists()};
 ACT.cancelc=()=>{CONFIRM=null;route()};
 ACT.dellist=a=>{S.lists=S.lists.filter(l=>l.id!==a.dataset.id);CONFIRM=null;save();rLists();toast('Lista törölve.')};
-const findL=a=>S.lists.find(l=>l.id===a.dataset.l);
+const findL=a=>allLists().find(l=>l.id===a.dataset.l);
 ACT.togverb=a=>{const l=findL(a),w=l&&l.words.find(x=>x.id===a.dataset.w);if(!w)return;if(!w.verb&&!conjugate(w.fr)){toast('Ezt nem tudom igeként ragozni.');return}w.verb=!w.verb;save();rLists()};
 ACT.delw=a=>{const l=findL(a);if(!l)return;l.words=l.words.filter(x=>x.id!==a.dataset.w);save();rLists()};
 ACT.addw=a=>{const l=findL(a),fr=$('#nfr').value.trim(),hu=$('#nhu').value.trim();if(!fr||!hu){toast('Írd be a francia és a magyar alakot is.');return}const w=makeWord(fr,hu,'','');const i=l.words.findIndex(x=>x.id===w.id);if(i>=0)l.words[i]=w;else l.words.push(w);save();rLists();setTimeout(()=>{const e=$('#nfr');e&&e.focus()},30)};
@@ -632,12 +656,39 @@ function rSettings(){loadVoices();const st=S.settings;
   <button class="btn ghost mt" data-act="testvoice">▶ Próba</button>${switchRow('autoplay','Automatikus lejátszás')}</div>
   <div class="card"><h2>✍️ Ellenőrzés</h2>${switchRow('article','A névelő kötelező (le / la / l\' / un / une)')}<p class="small muted">Bekapcsolva a névelő nélküli válasz csak „majdnem jó”. Ha a névelővel együtt tanulod, a szó nemét is megjegyzed.</p></div>
   <div class="card"><h2>👤 Fiók</h2><div class="row" style="justify-content:space-between"><span>Belépve: <b>${esc(USER)}</b></span><button class="btn sm light" data-act="logout">Kilépés</button></div></div>
+  <div class="card"><h2>💌 Meghívók</h2><div id="invbox">${INV?invHTML():'<p class="small muted">Betöltés…</p>'}</div></div>
   <div class="card"><h2>💾 Mentés</h2><p class="small">${cloud.ready?'A haladás a szerveren is mentődik, így bármelyik eszközön megmarad, ahol ezt az oldalt megnyitod.':'A szerver most nem érhető el – a haladás addig ebben a böngészőben mentődik, és később automatikusan feltöltöm.'}</p>
   <div class="row"><button class="btn sm ghost" data-act="copybak">📋 Mentés másolása</button><button class="btn sm ghost" data-act="dlbak">⬇️ Mentés letöltése</button></div>
   <details class="mt"><summary>Mentés visszatöltése</summary><textarea id="bak" class="t mt" rows="4" placeholder="Illeszd be a korábban kimásolt mentést"></textarea><button class="btn sm mt" data-act="loadbak">Visszatöltés</button></details>
   <div class="mt">${CONFIRM==='reset'?`<button class="btn sm red" data-act="resetall">Biztosan törlöd az összes haladást?</button> <button class="btn sm light" data-act="cancelc">Mégse</button>`:`<button class="btn sm light" data-act="askreset">Összes haladás nullázása</button>`}</div></div>`;
   const v=$('#voice');if(v)v.onchange=()=>{S.settings.voice=v.value;save();loadVoices();say('Bonjour !')};
-  const r=$('#rate');r.oninput=()=>{$('#ratev').textContent=r.value};r.onchange=()=>{S.settings.rate=+r.value;save()}}
+  const r=$('#rate');r.oninput=()=>{$('#ratev').textContent=r.value};r.onchange=()=>{S.settings.rate=+r.value;save()};loadInvites()}
+/* meghívók */
+let INV=null;
+const invLink=c=>location.origin+'/register?invite='+encodeURIComponent(c);
+const fmtDate=t=>t?fmtDay(new Date(t)).replace(/-/g,'.')+'.':'';
+function invHTML(){const I=INV;if(I.error)return`<p class="small muted">${esc(I.error)}</p>`;if(!I.limit&&!I.invites.length)return'<p class="small muted">Meghívót most csak az adminisztrátor tud készíteni.</p>';
+  const st=i=>i.status==='used'?`<span class="pill g">✔ regisztrált: ${esc(i.usedBy)}</span>`:i.status==='open'?`<span class="pill">érvényes: ${esc(fmtDate(i.expiresAt))}-ig</span>`:'<span class="pill r">lejárt</span>';
+  const row=i=>`<div class="listrow"><div style="flex:1;min-width:160px"><b>${esc(i.note||'Meghívó')}</b> <span class="small muted">· ${esc(i.code)}</span><div>${st(i)}</div></div>
+   ${i.status==='open'?`<button class="btn sm ghost" data-act="invcopy" data-c="${esc(i.code)}">${navigator.share?'📤 Küldés':'📋 Link másolása'}</button>${CONFIRM==='inv:'+i.code?`<button class="btn sm red" data-act="invrevoke" data-c="${esc(i.code)}">Biztos törlöd?</button><button class="btn sm light" data-act="invcancel">Mégse</button>`:`<button class="btn sm light" data-act="invask" data-c="${esc(i.code)}" aria-label="Meghívó törlése">🗑️</button>`}`:''}</div>`;
+  return`<p class="small">Legfeljebb <b>${I.limit}</b> embert hívhatsz meg. Még <b>${I.remaining}</b> meghívód maradt.</p>
+  <p class="small muted">A link 14 napig érvényes, és csak egyszer használható. A lejárt vagy törölt (fel nem használt) meghívó nem számít bele a keretbe.</p>
+  ${I.invites.map(row).join('')}
+  ${I.remaining>0?`<div class="row mt"><input id="invnote" class="t" style="flex:1;min-width:160px" maxlength="60" placeholder="Kinek szól? (pl. Anna)"><button class="btn sm" data-act="invnew">+ Új meghívó</button></div>`:'<p class="small muted mt">Elfogyott a meghívó-kereted.</p>'}`}
+function showInv(d){INV=d;const b=$('#invbox');if(b)b.innerHTML=invHTML()}
+async function invApi(url,body){const r=await fetch(url,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{cache:'no-store'});
+  if(r.status===401){toLogin();throw 0}const d=await r.json().catch(()=>({}));if(!r.ok)throw d.error||'error';return d}
+async function loadInvites(){try{showInv(await invApi('/api/invites'))}catch(e){if(!INV)showInv({error:'A meghívók most nem érhetők el.'})}}
+async function shareInvite(code,note){const url=invLink(code);
+  if(navigator.share){try{await navigator.share({title:'Mon Français',text:`Meghívó a Mon Français francia gyakorlóba${note?' – '+note:''}:`,url});return}catch(e){if(e&&e.name==='AbortError')return}}
+  copyText(url,'Meghívó link kimásolva – küldd el annak, akit meghívsz!')}
+ACT.invnew=async a=>{a.disabled=true;const note=($('#invnote')||{}).value||'';
+  try{const d=await invApi('/api/invites',{note});showInv(d);const i=d.invites[d.invites.length-1];if(i)shareInvite(i.code,i.note)}
+  catch(e){toast(e==='invite_limit'?'Elfogyott a meghívó-kereted.':'Nem sikerült meghívót készíteni.');loadInvites()}};
+ACT.invcopy=a=>{const i=INV.invites.find(x=>x.code===a.dataset.c);i&&shareInvite(i.code,i.note)};
+ACT.invask=a=>{CONFIRM='inv:'+a.dataset.c;showInv(INV)};
+ACT.invcancel=()=>{CONFIRM=null;showInv(INV)};
+ACT.invrevoke=async a=>{CONFIRM=null;try{showInv(await invApi('/api/invites/revoke',{code:a.dataset.c}));toast('Meghívó törölve.')}catch(e){toast('Ezt a meghívót már nem lehet törölni.');loadInvites()}};
 ACT.testvoice=()=>{S.settings.rate=+$('#rate').value;say('Bonjour ! Comment ça va ? Je m\'appelle Claude.')};
 ACT.copybak=()=>copyText(JSON.stringify(S),'Mentés kimásolva – tedd el egy jegyzetbe.');
 ACT.dlbak=()=>{const u=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download='mon-francais-mentes-'+today()+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)};
@@ -667,9 +718,10 @@ setInterval(()=>{if(cloud.retry&&cloud.ready){cloud.retry=false;pushCloud()}},30
 
 /* ---------- indulás ---------- */
 let S=load();
+loadBaseCached();
 if('speechSynthesis' in window){loadVoices();try{speechSynthesis.onvoiceschanged=loadVoices}catch(e){}}
 route();
-setTimeout(()=>initCloud(),0);
+setTimeout(()=>{initCloud();fetchBase()},0);
 </script>
 </body>
 </html>

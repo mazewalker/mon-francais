@@ -8,6 +8,7 @@ const store = require('./store');
 
 const PORT = +process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
+const BASE_DICTIONARY = path.join(__dirname, 'dictionary', 'base.csv');
 const COOKIE = 'mf_session';
 const MAX_BODY = 10 * 1024 * 1024;
 
@@ -56,6 +57,18 @@ async function limited(req, fn) {
   try { return await fn(); } catch (e) { if (e.status && e.status < 500) a.n++; throw e; }
 }
 setInterval(() => { const now = Date.now(); for (const [k, v] of attempts) if (v.reset < now) attempts.delete(k); }, 60e3).unref();
+
+async function userInvites(u) {
+  const list = await store.listUserInvites(u);
+  return {
+    limit: store.USER_INVITE_LIMIT,
+    remaining: Math.max(0, store.USER_INVITE_LIMIT - list.filter(store.countsTowardLimit).length),
+    invites: list.map(i => ({
+      code: i.code, note: i.note, createdAt: i.createdAt, expiresAt: i.expiresAt, usedBy: i.usedBy, usedAt: i.usedAt,
+      status: i.usedBy ? 'used' : store.inviteUsable(i) ? 'open' : 'expired',
+    })),
+  };
+}
 
 let registering = Promise.resolve(); // serialize registrations so an invite can't be used twice
 
@@ -109,6 +122,37 @@ const api = {
     if (!u) return json(res, 401, { error: 'unauthenticated' });
     const doc = await store.readState(u);
     doc ? json(res, 200, doc) : send(res, 204);
+  },
+
+  // Invites a logged-in user made from the app (limited to store.USER_INVITE_LIMIT).
+  async 'GET /api/invites'(req, res) {
+    const u = await currentUser(req);
+    if (!u) return json(res, 401, { error: 'unauthenticated' });
+    json(res, 200, await userInvites(u));
+  },
+
+  async 'POST /api/invites'(req, res) {
+    const u = await currentUser(req);
+    if (!u) return json(res, 401, { error: 'unauthenticated' });
+    const { note } = await readBody(req);
+    try { await store.createUserInvite(u, note); }
+    catch (e) { if (e.message === 'invite limit reached') throw httpError(403, 'invite_limit'); throw e; }
+    json(res, 200, await userInvites(u));
+  },
+
+  async 'POST /api/invites/revoke'(req, res) {
+    const u = await currentUser(req);
+    if (!u) return json(res, 401, { error: 'unauthenticated' });
+    const { code } = await readBody(req);
+    try { await store.revokeUserInvite(u, code); }
+    catch (e) { if (/no such|already used/.test(e.message)) throw httpError(400, 'cannot_revoke'); throw e; }
+    json(res, 200, await userInvites(u));
+  },
+
+  // Shared base dictionary, the same for every user (dictionary/base.csv, read per request so edits need no restart).
+  async 'GET /api/dictionary'(req, res) {
+    if (!(await currentUser(req))) return json(res, 401, { error: 'unauthenticated' });
+    send(res, 200, await fsp.readFile(BASE_DICTIONARY), { 'Content-Type': 'text/csv; charset=utf-8' });
   },
 
   async 'PUT /api/state'(req, res) {

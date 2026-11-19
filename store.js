@@ -4,7 +4,7 @@
 //
 // DATA_DIR/
 //   accounts/<username>.json        { username, hash, createdAt, invite }
-//   invites/<CODE>.json             { code, note, createdAt, expiresAt, usedBy, usedAt }
+//   invites/<CODE>.json             { code, note, createdAt, expiresAt, usedBy, usedAt, createdBy }  (createdBy: null = admin CLI)
 //   sessions/<sha256(token)>.json   { username, createdAt, expiresAt }
 //   users/<username>/state.json     { json, updatedAt, savedAt }
 //   users/<username>/backups/state-YYYY-MM-DD.json   (one per day, kept forever)
@@ -106,9 +106,9 @@ function newInviteCode() {
   const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O/1/I
   return [...crypto.randomBytes(10)].map(b => A[b % A.length]).join('');
 }
-async function createInvite({ note = '', days = 14 } = {}) {
+async function createInvite({ note = '', days = 14, createdBy = null } = {}) {
   const code = newInviteCode();
-  const rec = { code, note, createdAt: Date.now(), expiresAt: days > 0 ? Date.now() + days * DAY : null, usedBy: null, usedAt: null };
+  const rec = { code, note, createdAt: Date.now(), expiresAt: days > 0 ? Date.now() + days * DAY : null, usedBy: null, usedAt: null, createdBy };
   await writeJson(inviteFile(code), rec, { exclusive: true });
   return rec;
 }
@@ -128,6 +128,33 @@ async function revokeInvite(code) {
   await fsp.rm(inviteFile(inv.code), { force: true });
 }
 const listInvites = () => listJson(DIRS.invites);
+
+/* ---------- invites made by users from the app ---------- */
+// A user may have at most USER_INVITE_LIMIT invites that are used or still open.
+// Expired-unused and revoked invites don't count, so the slot comes back.
+const USER_INVITE_LIMIT = Math.max(0, parseInt(process.env.USER_INVITE_LIMIT ?? '3', 10) || 0);
+const USER_INVITE_DAYS = 14;
+const countsTowardLimit = inv => !!inv.usedBy || inviteUsable(inv);
+async function listUserInvites(username) {
+  return (await listInvites()).filter(i => i.createdBy === username).sort((a, b) => a.createdAt - b.createdAt);
+}
+const inviteLocks = new Map(); // serialize per user so two quick clicks can't exceed the limit
+function createUserInvite(username, note) {
+  const run = async () => {
+    const used = (await listUserInvites(username)).filter(countsTowardLimit).length;
+    if (used >= USER_INVITE_LIMIT) throw new Error('invite limit reached');
+    return createInvite({ note: String(note || '').trim().slice(0, 60), days: USER_INVITE_DAYS, createdBy: username });
+  };
+  const p = (inviteLocks.get(username) || Promise.resolve()).then(run, run);
+  inviteLocks.set(username, p.catch(() => {}));
+  return p;
+}
+async function revokeUserInvite(username, code) {
+  const inv = await getInvite(code);
+  if (!inv || inv.createdBy !== username) throw new Error('no such invite');
+  if (inv.usedBy) throw new Error('invite already used');
+  await fsp.rm(inviteFile(inv.code), { force: true });
+}
 
 /* ---------- sessions ---------- */
 const tokenHash = t => crypto.createHash('sha256').update(String(t)).digest('hex');
@@ -179,6 +206,7 @@ module.exports = {
   DATA_DIR, DIRS, MIN_PASSWORD, normUser, validUsername, verifyPassword, randomPassword,
   getUser, createUser, setPassword, deleteUser, listUsers,
   normInvite, createInvite, getInvite, inviteUsable, markInviteUsed, revokeInvite, listInvites,
+  USER_INVITE_LIMIT, countsTowardLimit, listUserInvites, createUserInvite, revokeUserInvite,
   createSession, getSession, deleteSession, deleteUserSessions,
   userDir, readState, writeState, pendingWrites, readJson, writeJson,
 };

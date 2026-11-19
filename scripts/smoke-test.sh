@@ -29,6 +29,22 @@ check "$(code -b "$DATA_DIR/ca" -X PUT -d '{"json":"{}","updatedAt":50}' "$B/api
 curl -s -b "$DATA_DIR/ca" "$B/api/state" | grep -q '"who\\":\\"anna' || fail "anna reads her data"; echo "ok  anna reads her own data"
 curl -s -b "$DATA_DIR/ca" "$B/" | grep -q 'name="mf-user" content="anna"' || fail "page knows user"; echo "ok  page is served with username"
 
+check "$(code "$B/api/dictionary")" 401 "base dictionary requires login"
+curl -s -b "$DATA_DIR/cb" "$B/api/dictionary" | head -1 | grep -q '^francia;magyar;tipus;megjegyzes;lecke' || fail "base dictionary served"; echo "ok  base dictionary is served to users"
+
+check "$(code -X POST -H "$J" -d '{}' "$B/api/invites")" 401 "user invites require login"
+for n in 1 2 3; do check "$(code -b "$DATA_DIR/cb" -X POST -H "$J" -d "{\"note\":\"friend $n\"}" "$B/api/invites")" 200 "bela creates invite $n"; done
+check "$(code -b "$DATA_DIR/cb" -X POST -H "$J" -d '{"note":"friend 4"}' "$B/api/invites")" 403 "4th user invite is refused"
+UI=$(curl -s -b "$DATA_DIR/cb" "$B/api/invites" | node -pe 'JSON.parse(require("fs").readFileSync(0)).invites[0].code')
+check "$(code -b "$DATA_DIR/ca" -X POST -H "$J" -d "{\"code\":\"$UI\"}" "$B/api/invites/revoke")" 400 "anna cannot revoke bela's invite"
+check "$(code -c "$DATA_DIR/cc" -X POST -H "$J" -d "{\"invite\":\"$UI\",\"username\":\"cili\",\"password\":\"secret3\"}" "$B/api/register")" 200 "register cili with bela's invite"
+check "$(code -b "$DATA_DIR/cb" -X POST -H "$J" -d "{\"code\":\"$UI\"}" "$B/api/invites/revoke")" 400 "used invite cannot be revoked"
+UI2=$(curl -s -b "$DATA_DIR/cb" "$B/api/invites" | node -pe 'JSON.parse(require("fs").readFileSync(0)).invites[1].code')
+check "$(code -b "$DATA_DIR/cb" -X POST -H "$J" -d "{\"code\":\"$UI2\"}" "$B/api/invites/revoke")" 200 "bela revokes an open invite"
+check "$(code -b "$DATA_DIR/cb" -X POST -H "$J" -d '{"note":"friend 5"}' "$B/api/invites")" 200 "revoking frees a slot"
+check "$(code -b "$DATA_DIR/cb" -X POST -H "$J" -d '{"note":"friend 6"}' "$B/api/invites")" 403 "limit holds (1 used + 2 open)"
+check "$(code -b "$DATA_DIR/cc" -X POST -H "$J" -d '{}' "$B/api/invites")" 200 "invited users can invite too"
+
 check "$(code -X POST -H "$J" -d '{"username":"anna","password":"wrong"}' "$B/api/login")" 401 "wrong password rejected"
 check "$(code -c "$DATA_DIR/ca2" -X POST -H "$J" -d '{"username":"ANNA","password":"secret1"}' "$B/api/login")" 200 "login (case-insensitive username)"
 node cli.js passwd anna newpass1 >/dev/null

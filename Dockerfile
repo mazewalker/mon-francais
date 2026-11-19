@@ -4,6 +4,7 @@ ENV NODE_ENV=production PORT=3000 DATA_DIR=/data
 WORKDIR /app
 COPY package.json Makefile store.js server.js cli.js ./
 COPY public ./public
+COPY dictionary ./dictionary
 RUN mkdir -p /data && chown -R node:node /data
 USER node
 VOLUME ["/data"]

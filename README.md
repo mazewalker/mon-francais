@@ -7,6 +7,26 @@ French practice app for several users. Each user has their own account and their
 - `server.js` – zero-dependency Node server
 - `store.js` – file-based storage shared by the server and the CLI
 - `cli.js` – admin CLI, run through `make`
+- `dictionary/base.csv` – shared base dictionary, available to every user
+
+## Invites from the app
+
+Logged-in users can invite up to **3** people from Settings → "💌 Meghívók". Each invite is a single-use link that expires after 14 days. On phones it opens the share sheet; elsewhere the link is copied to the clipboard.
+
+- Used invites and open invites count toward the limit. Expired invites, and open invites the user deletes, don't count, so the slot comes back. A used invite can't be deleted.
+- People who were invited can invite others too, each with their own limit of 3.
+- To change the limit, set the env var `USER_INVITE_LIMIT`. `0` turns off invites from the app; `make invite` from the admin CLI is never limited.
+- `make invites` shows who created each invite in the `by` column (`admin` = CLI).
+
+## Base dictionary
+
+`dictionary/base.csv` is a word list every user gets automatically ("📘 Alapszótár" in the app). It uses the same format as the in-app CSV import: `francia;magyar;tipus;megjegyzes;lecke`. Each value in the `lecke` column becomes a separate lesson.
+
+- It isn't stored in users' data. The server reads the file on every request, so edits show up on the next page load without a restart or redeploy of user data.
+- Users can switch lessons on and off but can't edit them. Progress is tracked per word, the same as for their own lists. If a user's own list has the same word, that word's progress is shared.
+- Alternatives are separated with ` / ` or `|` (e.g. `content / contente`). Nouns carry their article, so the "article required" setting can teach gender.
+
+The file was built by hand from the class notes and dictionaries in `initial-dictionary-data/` (that folder is not committed). Lesson names and IDs come from the `lecke` text, so renaming a lesson turns it back on for anyone who had switched it off.
 
 ## Admin commands
 

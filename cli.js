@@ -29,9 +29,9 @@ const cmds = {
   async invites() {
     const list = (await store.listInvites()).sort((a, b) => a.createdAt - b.createdAt);
     table(list.map(i => ({
-      code: i.code, note: i.note, created: fmt(i.createdAt),
+      code: i.code, note: i.note, created: fmt(i.createdAt), by: i.createdBy || 'admin',
       status: i.usedBy ? `used by ${i.usedBy}` : store.inviteUsable(i) ? `open until ${i.expiresAt ? fmt(i.expiresAt) : 'forever'}` : 'expired',
-    })), ['code', 'status', 'created', 'note']);
+    })), ['code', 'status', 'created', 'by', 'note']);
   },
 
   async 'revoke-invite'(code) {
