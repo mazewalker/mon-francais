@@ -1,9 +1,13 @@
 {
   "name": "mon-francais",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Mon Français – francia gyakorló",
   "main": "server.js",
-  "scripts": { "start": "node server.js" },
-  "engines": { "node": ">=18" }
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }
